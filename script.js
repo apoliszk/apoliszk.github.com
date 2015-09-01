@@ -7,96 +7,118 @@ function fuzz(x, f) {
 // x1: end
 // t: step from 0 to 1
 function handDrawMovement(x0, x1, t) {
-    return x0 + (x0 - x1) * (
-        15 * Math.pow(t, 4) -
-        6 * Math.pow(t, 5) -
-        10 * Math.pow(t, 3)
-    )
-}
-
-// hand draw a circle
-// ctx: Context2D
-// x, y: Coordinates
-// r: radius
-function handDrawCircle(ctx, x, y, r) {
-    var steps = Math.ceil(Math.sqrt(r) * 3);
-
-    // fuzzyness dependent on radius
-    var f = 0.12 * r;
-
-    // distortion of the circle
-    var xs = 1.0 + Math.random() * 0.1 - 0.05;
-    var ys = 2.0 - xs;
-
-    ctx.moveTo(x + r * xs, y);
-
-    for (var i = 1; i <= steps; i++) {
-        var t0 = (Math.PI * 2 / steps) * (i - 1);
-        var t1 = (Math.PI * 2 / steps) * i;
-        var x0 = x + Math.cos(t0) * r * xs;
-        var y0 = y + Math.sin(t0) * r * ys;
-        var x1 = x + Math.cos(t1) * r * xs;
-        var y1 = y + Math.sin(t1) * r * ys;
-
-        ctx.quadraticCurveTo(fuzz(x0, f), fuzz(y0, f), x1, y1);
-        ctx.moveTo(x1, y1);
-    }
+    return x0 + (x0 - x1) * (15 * Math.pow(t, 4) - 6 * Math.pow(t, 5) - 10 * Math.pow(t, 3));
 }
 
 // inspired by this paper
 // http://iwi.eldoc.ub.rug.nl/FILES/root/2008/ProcCAGVIMeraj/2008ProcCAGVIMeraj.pdf
-function handDrawLine(ctx, x0, y0, x1, y1) {
-    ctx.moveTo(x0, y0)
+function handDrawLine(x0, y0, x1, y1) {
+    var d = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0));
 
-    var d = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0))
+    var steps = d / 40;
+    if (steps < 1) steps = 1;
 
-    var steps = d / 25;
-    if (steps < 4) {
-        steps = 4;
-    }
+    var curStartX = x0;
+    var curStartY = y0;
+
+    var curEndX;
+    var curEndY;
 
     // fuzzyness
-    var f = 8.0;
+    var f = 4.0;
     for (var i = 1; i <= steps; i++) {
         var t1 = i / steps;
-        var t0 = t1 - 1 / steps
-        var xt0 = handDrawMovement(x0, x1, t0)
-        var yt0 = handDrawMovement(y0, y1, t0)
-        var xt1 = handDrawMovement(x0, x1, t1)
-        var yt1 = handDrawMovement(y0, y1, t1)
-        ctx.quadraticCurveTo(fuzz(xt0, f), fuzz(yt0, f), xt1, yt1)
-        ctx.moveTo(xt1, yt1)
+        var t0 = t1 - 1 / steps;
+
+        curEndX = handDrawMovement(x0, x1, t1);
+        curEndY = handDrawMovement(y0, y1, t1);
+
+        addActionToDrawArr({
+            start: {
+                x: curStartX,
+                y: curStartY
+            },
+            control: {
+                x: fuzz(handDrawMovement(x0, x1, t0), f),
+                y: fuzz(handDrawMovement(y0, y1, t0), f)
+            },
+            end: {
+                x: curEndX,
+                y: curEndY
+            }
+        });
+
+        curStartX = curEndX;
+        curStartY = curEndY;
     }
 }
+
+function addActionToDrawArr(action) {
+    if (drawArr.length == 0) {
+        requestAnimationFrame(onFrame);
+    }
+    drawArr.push(action);
+}
+
+function addStringToLetterArr(str) {
+    if (letterArr.length == 0) {
+        requestAnimationFrame(onFrame);
+    }
+    for (var i = 0, len = str.length; i < len; i++) {
+        letterArr.push(str.charAt(i));
+    }
+}
+
+function onFrame() {
+    if (letterArr.length > 0) {
+        var letter = letterArr.shift();
+        headerInfo.innerHTML += letter;
+    } else if (drawArr.length > 0) {
+        var action = drawArr.shift();
+        ctx.moveTo(action.start.x, action.start.y);
+        ctx.quadraticCurveTo(action.control.x, action.control.y, action.end.x, action.end.y);
+        ctx.stroke();
+    }
+    if (letterArr.length > 0 || drawArr.length > 0) requestAnimationFrame(onFrame);
+}
+
+function drawRect(x, y, w, h) {
+    handDrawLine(x, y, x + w, y);
+    handDrawLine(x + w, y, x + w, y + h);
+    handDrawLine(x + w, y + h, x, y + h);
+    handDrawLine(x, y + h, x, y);
+}
+
+var drawArr = [];
+var letterArr = [];
 
 var headerInfo = document.getElementById('headerInfo');
 var canvasDiv = document.getElementById('canvasDiv');
+
 var canvas = document.getElementById('canvas');
+canvas.width = 440;
+canvas.height = 710;
 
-var infoStr = 'Enter the authentication code to get in.';
-var strLength = infoStr.length;
-var strIndex = 0;
-requestAnimationFrame(printWord);
+var ctx = canvas.getContext('2d');
+ctx.lineWidth = 2;
+ctx.lineCap = "butt";
 
-function printWord() {
-    strIndex += 1;
-    headerInfo.innerHTML = infoStr.substring(0, strIndex);
-    if (strIndex < strLength) {
-        requestAnimationFrame(printWord);
-    } else {
-        drawCoffer();
-    }
-}
+addStringToLetterArr('Enter the password to get in...');
 
-function drawCoffer() {
-    canvas.width = 800;
-    canvas.height = 800;
-    var ctx = canvas.getContext('2d');
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    handDrawLine(ctx, 10, 10, 610, 10);
-    handDrawLine(ctx, 610, 10, 610, 610);
-    handDrawLine(ctx, 610, 610, 10, 610);
-    handDrawLine(ctx, 10, 610, 10, 10);
-    ctx.stroke();
-}
+drawRect(5, 5, 430, 695);
+
+drawRect(45, 50, 350, 100);
+
+drawRect(45, 190, 100, 100);
+drawRect(170, 190, 100, 100);
+drawRect(295, 190, 100, 100);
+
+drawRect(45, 315, 100, 100);
+drawRect(170, 315, 100, 100);
+drawRect(295, 315, 100, 100);
+
+drawRect(45, 440, 100, 100);
+drawRect(170, 440, 100, 100);
+drawRect(295, 440, 100, 100);
+
+drawRect(170, 565, 100, 100);
