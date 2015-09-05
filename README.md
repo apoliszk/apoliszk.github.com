@@ -1,1 +1,1 @@
-# apoliszk.github.com
+# http://apoliszk.github.io
