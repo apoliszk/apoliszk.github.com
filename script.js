@@ -93,15 +93,8 @@ var drawArr = [];
 var letterArr = [];
 
 var headerInfo = document.getElementById('headerInfo');
-var canvasDiv = document.getElementById('canvasDiv');
-
 var canvas = document.getElementById('canvas');
-canvas.width = 440;
-canvas.height = 710;
-
 var ctx = canvas.getContext('2d');
-ctx.lineWidth = 2;
-ctx.lineCap = "butt";
 
 addStringToLetterArr('Enter the password to get in...');
 
