@@ -7,17 +7,22 @@
     <link rel="shortcut icon" type="image/ico" href="favicon.ico">
     <style>
         body {
-            font-family: "Microsoft Yahei", "\5FAE\8F6F\96C5\9ED1", arial, sans-serif;
-            font-size: 14px;
+            font-family: arial, sans-serif;
         }
-        h1 {
-            padding-left: 5px;
+
+        body * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        #screenMsg {
+            position: absolute;
         }
     </style>
 </head>
 
 <body>
-    <h1 id="headerInfo"></h1>
+    <div id="screenMsg"></div>
     <canvas id="canvas" width="440" height="710">Canvas not support</canvas>
     <script src="script.js"></script>
 </body>
