@@ -1,15 +1,137 @@
-var MSG_FONT_SIZE = 14;
-var CANVAS_FONT_SIZE = 70;
+var CONSTANTS = {
+    lineLenghtDrawnPerFrame: 40
+};
 
-var CANVAS_WIDTH = 440;
-var CANVAS_HEIGHT = 710;
-var CANVAS_PADDING = 5;
+function PasswordPad() {
+    this.actionArr = [];
 
-var MAX_LINE_LENGTH_PRE_FRAME = 40;
+    this.keys = [];
+
+    this.canvas = document.getElementById('pwdPadCanvas');
+    this.canvas.width = this.CANVAS_WIDTH;
+    this.canvas.height = this.CANVAS_HEIGHT;
+    this.canvasContext = this.canvas.getContext('2d');
+    this.canvasContext.font = this.NUM_PAD_FONT_SIZE + 'px Arial';
+
+    var canvasBound = this.canvas.getBoundingClientRect();
+    this.msgDiv = document.getElementById('pwdPadMsgDiv');
+    this.msgDiv.style.fontSize = this.MSG_FONT_SIZE + 'px';
+    this.msgDiv.style.left = 45 + canvasBound.left + 'px';
+    this.msgDiv.style.top = 50 - this.MSG_FONT_SIZE * 2 + canvasBound.top + 'px';
+
+    this.canvas.addEventListener('mousedown', wrapFunction(this.mouseDownHandler, this));
+    this.canvas.addEventListener('mouseup', wrapFunction(this.mouseUpHandler, this));
+}
+
+PasswordPad.prototype = {
+    MSG_FONT_SIZE: 14,
+    NUM_PAD_FONT_SIZE: 70,
+    CANVAS_WIDTH: 440,
+    CANVAS_HEIGHT: 710,
+    CANVAS_PADDING: 5,
+    HORIZONTAL_PAD_PADDING: 40,
+    PAD_PADDING_TOP: 45,
+    SCREEN_HEIGHT: 100,
+    KEY_WIDTH: 100,
+    KEY_HEIGHT: 100,
+    addAction: addAction,
+    drawLine: drawLine,
+    drawRect: drawRect
+};
+PasswordPad.prototype.drawKey = function(x, y, w, h, num) {
+    this.drawRect(x, y, w, h);
+    var txtWidth = this.canvasContext.measureText(num).width;
+    var fontSize = this.NUM_PAD_FONT_SIZE;
+    var keyObj = {
+        x: x + (w - txtWidth) / 2,
+        y: y + (h - fontSize) / 2 + fontSize * .8,
+        w: w,
+        h: h,
+        num: num
+    };
+    this.keys[num] = keyObj;
+
+    this.addAction({
+        type: 'text',
+        txt: num,
+        x: keyObj.x,
+        y: keyObj.y
+    });
+};
+PasswordPad.prototype.doAction = function(action) {
+    switch (action.type) {
+        case 'line':
+            this.canvasContext.moveTo(action.start.x, action.start.y);
+            this.canvasContext.lineTo(action.end.x, action.end.y);
+            this.canvasContext.stroke();
+            break;
+        case 'text':
+            this.canvasContext.fillText(action.txt, action.x, action.y);
+            break;
+        case 'letter':
+            if (action.act == 'append')
+                this.msgDiv.innerHTML += action.letter;
+            else if (action.act == 'clear')
+                this.msgDiv.innerHTML = '';
+            break;
+        default:
+            break;
+    }
+};
+PasswordPad.prototype.showStringOnMsgDiv = function(str) {
+    this.addAction({
+        type: 'letter',
+        act: 'clear'
+    });
+    for (var i = 0, len = str.length; i < len; i++) {
+        this.addAction({
+            type: 'letter',
+            act: 'append',
+            letter: str.charAt(i)
+        });
+    }
+};
+PasswordPad.prototype.drawPad = function() {
+    this.drawRect(this.CANVAS_PADDING,
+        this.CANVAS_PADDING,
+        this.CANVAS_WIDTH - this.CANVAS_PADDING * 2,
+        this.CANVAS_HEIGHT - this.CANVAS_PADDING * 2);
+};
+PasswordPad.prototype.drawScreen = function() {
+    this.drawRect(this.CANVAS_PADDING + this.HORIZONTAL_PAD_PADDING,
+        this.CANVAS_PADDING + this.PAD_PADDING_TOP,
+        this.CANVAS_WIDTH - (this.CANVAS_PADDING + this.HORIZONTAL_PAD_PADDING) * 2,
+        this.SCREEN_HEIGHT);
+};
+PasswordPad.prototype.drawKeys = function() {
+    var left = this.CANVAS_PADDING + this.HORIZONTAL_PAD_PADDING;
+    var leftWidth = this.CANVAS_WIDTH - left * 2;
+    var gap = (leftWidth - this.KEY_WIDTH * 3) / 2;
+    var leftHeight = this.CANVAS_HEIGHT - this.CANVAS_PADDING * 2 - this.PAD_PADDING_TOP - this.SCREEN_HEIGHT;
+    var top = this.CANVAS_PADDING + this.PAD_PADDING_TOP + this.SCREEN_HEIGHT + (leftHeight - this.KEY_HEIGHT * 4 - gap * 3) / 2;
+
+    var x;
+    var y;
+    for (var i = 0; i < 9; i++) {
+        x = left + (i % 3) * (this.KEY_WIDTH + gap);
+        y = top + parseInt(i / 3) * (this.KEY_HEIGHT + gap);
+        this.drawKey(x, y, this.KEY_WIDTH, this.KEY_HEIGHT, 9 - i);
+    }
+
+    x -= this.KEY_WIDTH + gap;
+    y += this.KEY_HEIGHT + gap;
+    this.drawKey(x, y, this.KEY_WIDTH, this.KEY_HEIGHT, 9 - i);
+};
+PasswordPad.prototype.mouseDownHandler = function() {
+    // debugger;
+};
+PasswordPad.prototype.mouseUpHandler = function() {
+    debugger;
+};
 
 function drawLine(x0, y0, x1, y1) {
     var d = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0));
-    var steps = d / MAX_LINE_LENGTH_PRE_FRAME;
+    var steps = d / CONSTANTS.lineLenghtDrawnPerFrame;
     if (steps < 1) steps = 1;
 
     var curStartX = x0;
@@ -22,7 +144,7 @@ function drawLine(x0, y0, x1, y1) {
         curEndX = x0 + (x1 - x0) * i / steps;
         curEndY = y0 + (y1 - y0) * i / steps;
 
-        addActionToArr({
+        this.addAction({
             type: 'line',
             start: {
                 x: curStartX,
@@ -38,7 +160,7 @@ function drawLine(x0, y0, x1, y1) {
         curStartY = curEndY;
     }
 
-    addActionToArr({
+    this.addAction({
         type: 'line',
         start: {
             x: curStartX,
@@ -51,99 +173,35 @@ function drawLine(x0, y0, x1, y1) {
     });
 }
 
-function drawRect(x, y, w, h, txt) {
-    drawLine(x, y, x + w, y);
-    drawLine(x + w, y, x + w, y + h);
-    drawLine(x + w, y + h, x, y + h);
-    drawLine(x, y + h, x, y);
-
-    if (txt) {
-        var txtWidth = ctx.measureText(txt).width;
-        addActionToArr({
-            type: 'text',
-            txt: txt,
-            x: x + (w - txtWidth) / 2,
-            y: y + (h - CANVAS_FONT_SIZE) / 2 + CANVAS_FONT_SIZE * .8
-        });
-    }
+function drawRect(x, y, w, h) {
+    this.drawLine(x, y, x + w, y);
+    this.drawLine(x + w, y, x + w, y + h);
+    this.drawLine(x + w, y + h, x, y + h);
+    this.drawLine(x, y + h, x, y);
 }
 
-function addStringToActionArr(str, clear) {
-    if (clear) {
-        addActionToArr({
-            type: 'letter',
-            act: 'clear'
-        });
-    }
-    for (var i = 0, len = str.length; i < len; i++) {
-        addActionToArr({
-            type: 'letter',
-            act: 'append',
-            letter: str.charAt(i)
-        });
-    }
-}
-
-function addActionToArr(action) {
-    if (actionArr.length == 0) {
+function addAction(action) {
+    if (this.actionArr.length == 0) {
         requestAnimationFrame(onFrame);
     }
-    actionArr.push(action);
+    this.actionArr.push(action);
 }
 
 function onFrame() {
-    if (actionArr.length > 0) {
-        var action = actionArr.shift();
-
-        switch (action.type) {
-            case 'letter':
-                if (action.act == 'append')
-                    screenMsgDiv.innerHTML += action.letter;
-                else if (action.act == 'clear')
-                    screenMsgDiv.innerHTML = '';
-                break;
-            case 'line':
-                ctx.moveTo(action.start.x, action.start.y);
-                ctx.lineTo(action.end.x, action.end.y);
-                ctx.stroke();
-                break;
-            case 'text':
-                ctx.fillText(action.txt, action.x, action.y);
-                break;
-        }
+    if (pwdPad.actionArr.length > 0) {
+        pwdPad.doAction(pwdPad.actionArr.shift());
     }
-    if (actionArr.length > 0) requestAnimationFrame(onFrame);
+    if (pwdPad.actionArr.length > 0) requestAnimationFrame(onFrame);
 }
 
-var actionArr = [];
-var canvas = document.getElementById('canvas');
-canvas.width = CANVAS_WIDTH;
-canvas.height = CANVAS_HEIGHT;
-var canvasBound = canvas.getBoundingClientRect();
-var ctx = ctx = canvas.getContext('2d');
-ctx.font = CANVAS_FONT_SIZE + 'px Arial';
+function wrapFunction(func, scope) {
+    return function(){
+        func.apply(scope, arguments);
+    };
+}
 
-var screenMsgDiv = document.getElementById('screenMsg');
-screenMsgDiv.style.fontSize = MSG_FONT_SIZE + 'px';
-screenMsgDiv.style.left = 45 + canvasBound.left + 'px';
-screenMsgDiv.style.top = 50 - MSG_FONT_SIZE * 2 + canvasBound.top + 'px';
-
-drawRect(CANVAS_PADDING, CANVAS_PADDING, CANVAS_WIDTH - CANVAS_PADDING * 2, CANVAS_HEIGHT - CANVAS_PADDING * 2);
-
-drawRect(45, 50, 350, 100);
-
-drawRect(45, 190, 100, 100, '9');
-drawRect(170, 190, 100, 100, '8');
-drawRect(295, 190, 100, 100, '7');
-
-drawRect(45, 315, 100, 100, '6');
-drawRect(170, 315, 100, 100, '5');
-drawRect(295, 315, 100, 100, '4');
-
-drawRect(45, 440, 100, 100, '3');
-drawRect(170, 440, 100, 100, '2');
-drawRect(295, 440, 100, 100, '1');
-
-drawRect(170, 565, 100, 100, '0');
-
-addStringToActionArr('Enter the password to get in ...', true);
+var pwdPad = new PasswordPad();
+pwdPad.drawPad();
+pwdPad.drawScreen();
+pwdPad.drawKeys();
+pwdPad.showStringOnMsgDiv('Enter the password', true);
