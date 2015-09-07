@@ -1,5 +1,5 @@
 var CONSTANTS = {
-    lineLenghtDrawnPerFrame: 40
+    lineLenghtDrawnPerFrame: 20
 };
 
 function PasswordPad() {
@@ -11,13 +11,12 @@ function PasswordPad() {
     this.canvas.width = this.CANVAS_WIDTH;
     this.canvas.height = this.CANVAS_HEIGHT;
     this.canvasContext = this.canvas.getContext('2d');
-    this.canvasContext.font = this.NUM_PAD_FONT_SIZE + 'px Arial';
 
-    var canvasBound = this.canvas.getBoundingClientRect();
+    this.canvasBound = this.canvas.getBoundingClientRect();
     this.msgDiv = document.getElementById('pwdPadMsgDiv');
     this.msgDiv.style.fontSize = this.MSG_FONT_SIZE + 'px';
-    this.msgDiv.style.left = 45 + canvasBound.left + 'px';
-    this.msgDiv.style.top = 50 - this.MSG_FONT_SIZE * 2 + canvasBound.top + 'px';
+    this.msgDiv.style.left = this.HORIZONTAL_PAD_PADDING + this.CANVAS_PADDING + this.canvasBound.left + 'px';
+    this.msgDiv.style.top = this.PAD_PADDING_TOP + this.CANVAS_PADDING - this.MSG_FONT_SIZE * 2 + this.canvasBound.top + 'px';
 
     this.canvas.addEventListener('mousedown', wrapFunction(this.mouseDownHandler, this));
     this.canvas.addEventListener('mouseup', wrapFunction(this.mouseUpHandler, this));
@@ -26,6 +25,7 @@ function PasswordPad() {
 PasswordPad.prototype = {
     MSG_FONT_SIZE: 14,
     NUM_PAD_FONT_SIZE: 70,
+    SCREEN_FONT_SIZE: 70,
     CANVAS_WIDTH: 440,
     CANVAS_HEIGHT: 710,
     CANVAS_PADDING: 5,
@@ -40,35 +40,34 @@ PasswordPad.prototype = {
 };
 PasswordPad.prototype.drawKey = function(x, y, w, h, num) {
     this.drawRect(x, y, w, h);
-    var txtWidth = this.canvasContext.measureText(num).width;
     var fontSize = this.NUM_PAD_FONT_SIZE;
-    var keyObj = {
-        x: x + (w - txtWidth) / 2,
-        y: y + (h - fontSize) / 2 + fontSize * .8,
-        w: w,
-        h: h,
-        num: num
-    };
-    this.keys[num] = keyObj;
+
+    var keyDiv = document.createElement('div');
+    keyDiv.className = 'keyDiv';
+    keyDiv.style.width = w - 2 + 'px';
+    keyDiv.style.height = h - 2 + 'px';
+    keyDiv.style.left = this.canvasBound.left + 1 + x + 'px';
+    keyDiv.style.top = this.canvasBound.top + 1 + y + 'px';
+    keyDiv.style.fontSize = this.NUM_PAD_FONT_SIZE + 'px';
+    keyDiv.style.lineHeight = h - 2 + 'px';
+    keyDiv.innerHTML = num;
 
     this.addAction({
-        type: 'text',
-        txt: num,
-        x: keyObj.x,
-        y: keyObj.y
+        type: 'appendDiv',
+        element: keyDiv
     });
 };
 PasswordPad.prototype.doAction = function(action) {
     switch (action.type) {
-        case 'line':
+        case 'drawLine':
             this.canvasContext.moveTo(action.start.x, action.start.y);
             this.canvasContext.lineTo(action.end.x, action.end.y);
             this.canvasContext.stroke();
             break;
-        case 'text':
-            this.canvasContext.fillText(action.txt, action.x, action.y);
+        case 'appendDiv':
+            document.body.appendChild(action.element);
             break;
-        case 'letter':
+        case 'msg':
             if (action.act == 'append')
                 this.msgDiv.innerHTML += action.letter;
             else if (action.act == 'clear')
@@ -80,12 +79,12 @@ PasswordPad.prototype.doAction = function(action) {
 };
 PasswordPad.prototype.showStringOnMsgDiv = function(str) {
     this.addAction({
-        type: 'letter',
+        type: 'msg',
         act: 'clear'
     });
     for (var i = 0, len = str.length; i < len; i++) {
         this.addAction({
-            type: 'letter',
+            type: 'msg',
             act: 'append',
             letter: str.charAt(i)
         });
@@ -98,10 +97,25 @@ PasswordPad.prototype.drawPad = function() {
         this.CANVAS_HEIGHT - this.CANVAS_PADDING * 2);
 };
 PasswordPad.prototype.drawScreen = function() {
-    this.drawRect(this.CANVAS_PADDING + this.HORIZONTAL_PAD_PADDING,
-        this.CANVAS_PADDING + this.PAD_PADDING_TOP,
-        this.CANVAS_WIDTH - (this.CANVAS_PADDING + this.HORIZONTAL_PAD_PADDING) * 2,
-        this.SCREEN_HEIGHT);
+    var x = this.CANVAS_PADDING + this.HORIZONTAL_PAD_PADDING;
+    var y = this.CANVAS_PADDING + this.PAD_PADDING_TOP;
+    var w = this.CANVAS_WIDTH - (this.CANVAS_PADDING + this.HORIZONTAL_PAD_PADDING) * 2;
+    var h = this.SCREEN_HEIGHT;
+    this.drawRect(x, y, w, h);
+
+    var screenDiv = document.createElement('div');
+    screenDiv.className = 'screenDiv';
+    screenDiv.style.width = w + 'px';
+    screenDiv.style.height = h + 'px';
+    screenDiv.style.left = this.canvasBound.left + x + 'px';
+    screenDiv.style.top = this.canvasBound.top + y + 'px';
+    screenDiv.style.fontSize = this.SCREEN_FONT_SIZE + 'px';
+    screenDiv.style.lineHeight = h + 'px';
+
+    this.addAction({
+        type: 'appendDiv',
+        element: screenDiv
+    });
 };
 PasswordPad.prototype.drawKeys = function() {
     var left = this.CANVAS_PADDING + this.HORIZONTAL_PAD_PADDING;
@@ -123,10 +137,10 @@ PasswordPad.prototype.drawKeys = function() {
     this.drawKey(x, y, this.KEY_WIDTH, this.KEY_HEIGHT, 9 - i);
 };
 PasswordPad.prototype.mouseDownHandler = function() {
-    // debugger;
+
 };
 PasswordPad.prototype.mouseUpHandler = function() {
-    debugger;
+
 };
 
 function drawLine(x0, y0, x1, y1) {
@@ -145,7 +159,7 @@ function drawLine(x0, y0, x1, y1) {
         curEndY = y0 + (y1 - y0) * i / steps;
 
         this.addAction({
-            type: 'line',
+            type: 'drawLine',
             start: {
                 x: curStartX,
                 y: curStartY
@@ -161,7 +175,7 @@ function drawLine(x0, y0, x1, y1) {
     }
 
     this.addAction({
-        type: 'line',
+        type: 'drawLine',
         start: {
             x: curStartX,
             y: curStartY
@@ -195,7 +209,7 @@ function onFrame() {
 }
 
 function wrapFunction(func, scope) {
-    return function(){
+    return function() {
         func.apply(scope, arguments);
     };
 }

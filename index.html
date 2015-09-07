@@ -9,14 +9,30 @@
         body {
             font-family: "Microsoft Yahei", "\5FAE\8F6F\96C5\9ED1", arial, sans-serif;
         }
-
+        
         body * {
             margin: 0px;
             padding: 0px;
         }
 
-        #pwdPadMsgDiv {
+        #pwdPadMsgDiv,
+        .keyDiv,
+        .screenDiv {
             position: absolute;
+        }
+
+        .keyDiv {
+            cursor: pointer;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0);
+        }
+
+        .keyDiv:hover {
+            background-color: #eee;
+        }
+
+        .keyDiv:active {
+            background-color: #aaa;
         }
     </style>
 </head>
