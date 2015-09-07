@@ -5,8 +5,6 @@ var CONSTANTS = {
 function PasswordPad() {
     this.actionArr = [];
 
-    this.keys = [];
-
     this.canvas = document.getElementById('pwdPadCanvas');
     this.canvas.width = this.CANVAS_WIDTH;
     this.canvas.height = this.CANVAS_HEIGHT;
