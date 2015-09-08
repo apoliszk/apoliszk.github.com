@@ -13,7 +13,6 @@ function Kindle() {
 
 Kindle.prototype = {
     LOGO_FONT_SIZE: 60,
-    SCREEN_FONT_SIZE: 14,
     CANVAS_WIDTH: 585,
     CANVAS_HEIGHT: 820,
     PAD_WIDTH: 575,
@@ -31,6 +30,16 @@ Kindle.prototype = {
     drawCurve: drawCurve,
     drawRect: drawRect,
     drawRoundRect: drawRoundRect
+};
+
+Kindle.prototype.createButtonDiv = function(x, y, w, h) {
+    var div = document.createElement('div');
+    div.style.left = x + 'px';
+    div.style.top = y + 'px';
+    div.style.width = w + 'px';
+    div.style.height = h + 'px';
+    div.className = 'button';
+    return div;
 };
 
 Kindle.prototype.canvasPostionToGlobalPosition = function(x, y) {
@@ -101,22 +110,23 @@ Kindle.prototype.drawScreen = function() {
     this.screenY = (this.CANVAS_HEIGHT - this.SCREEN_HEIGHT) * .4;
     this.drawRect(this.screenX, this.screenY, this.SCREEN_WIDTH, this.SCREEN_HEIGHT);
 
+    var globalPosition = this.canvasPostionToGlobalPosition(this.screenX, this.screenY);
     this.screenDiv = document.createElement('div');
     this.screenDiv.style.position = 'absolute';
-    this.screenDiv.style.fontSize = this.SCREEN_FONT_SIZE + 'px';
     this.screenDiv.style.opacity = 0;
-    this.screenDiv.style.cursor = 'pointer';
-    this.screenDiv.style.transition = 'opacity 1s ease-in-out';
-    var globalPosition = this.canvasPostionToGlobalPosition(this.screenX, this.screenY);
     this.screenDiv.style.left = globalPosition.x + 'px';
     this.screenDiv.style.top = globalPosition.y + 'px';
     this.screenDiv.style.width = this.SCREEN_WIDTH + 'px';
     this.screenDiv.style.height = this.SCREEN_HEIGHT + 'px';
-    this.screenDiv.style.background = 'url(screen_lock.gif) no-repeat center';
+    this.screenDiv.style.background = 'url(screen_lock.gif) center no-repeat';
+    this.screenDiv.style.transition = 'opacity 1s ease-in-out';
     document.body.appendChild(this.screenDiv);
 };
 
 Kindle.prototype.drawKeys = function() {
+    var buttonRadius = this.KEY_DOT_RADIUS * 3;
+    var buttonWidth = buttonRadius * 2;
+
     var leftDot = {
         type: 'arc',
         x: this.padX + (this.PAD_WIDTH - this.SCREEN_WIDTH) / 4,
@@ -124,6 +134,10 @@ Kindle.prototype.drawKeys = function() {
         r: this.KEY_DOT_RADIUS,
         color: this.KEY_COLOR
     };
+    var leftDotCenterGlobalPosition = this.canvasPostionToGlobalPosition(leftDot.x, leftDot.y);
+    this.leftDotDiv = this.createButtonDiv(leftDotCenterGlobalPosition.x - buttonRadius, leftDotCenterGlobalPosition.y - buttonRadius, buttonWidth, buttonWidth);
+    this.leftDotDiv.style.borderRadius = buttonRadius + 'px';
+    document.body.appendChild(this.leftDotDiv);
 
     var rightDot = {
         type: 'arc',
@@ -132,20 +146,32 @@ Kindle.prototype.drawKeys = function() {
         r: this.KEY_DOT_RADIUS,
         color: this.KEY_COLOR
     };
+    var rightDotCenterGlobalPosition = this.canvasPostionToGlobalPosition(rightDot.x, rightDot.y);
+    this.rightDotDiv = this.createButtonDiv(rightDotCenterGlobalPosition.x - buttonRadius, rightDotCenterGlobalPosition.y - buttonRadius, buttonWidth, buttonWidth);
+    this.rightDotDiv.style.borderRadius = buttonRadius + 'px';
+    document.body.appendChild(this.rightDotDiv);
 
     var lineStartY = this.padY + this.PAD_HEIGHT / 2;
     var lineEndY = this.padY + this.PAD_HEIGHT / 2 + this.KEY_LINE_HEIGHT;
 
     this.addAction(leftDot);
     this.drawLine(leftDot.x, lineStartY, leftDot.x, lineEndY, this.KEY_LINE_WIDTH, this.KEY_COLOR);
+    var leftLineCenterGlobalPosition = this.canvasPostionToGlobalPosition(leftDot.x, lineStartY);
+    this.leftLineDiv = this.createButtonDiv(leftLineCenterGlobalPosition.x - buttonRadius, leftLineCenterGlobalPosition.y, buttonWidth, lineEndY - lineStartY);
+    this.leftLineDiv.style.borderRadius = buttonRadius + 'px';
+    document.body.appendChild(this.leftLineDiv);
 
     this.addAction(rightDot);
     this.drawLine(rightDot.x, lineStartY, rightDot.x, lineEndY, this.KEY_LINE_WIDTH, this.KEY_COLOR);
+    var rightLineCenterGlobalPosition = this.canvasPostionToGlobalPosition(rightDot.x, lineStartY);
+    this.rightLineDiv = this.createButtonDiv(rightLineCenterGlobalPosition.x - buttonRadius, rightLineCenterGlobalPosition.y, buttonWidth, lineEndY - lineStartY);
+    this.rightLineDiv.style.borderRadius = buttonRadius + 'px';
+    document.body.appendChild(this.rightLineDiv);
 };
 
 Kindle.prototype.drawLogo = function() {
     var logo = 'kindle';
-    var font = this.LOGO_FONT_SIZE + 'px Verdana';
+    var font = this.LOGO_FONT_SIZE + 'px Arial';
     this.canvasContext.save();
     this.canvasContext.font = font;
     var textWidth = this.canvasContext.measureText(logo).width;
