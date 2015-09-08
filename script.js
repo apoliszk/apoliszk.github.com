@@ -22,8 +22,10 @@ Kindle.prototype = {
     PAD_RADIUS: 40,
     SCREEN_WIDTH: 460,
     SCREEN_HEIGHT: 615,
-    KEY_DOT_RADIUS: 4,
-    KEY_LINE_HEIGHT: 160,
+    KEY_DOT_RADIUS: 5,
+    KEY_LINE_WIDTH: 2,
+    KEY_LINE_HEIGHT: 162,
+    KEY_COLOR: '#999',
     addAction: addAction,
     drawLine: drawLine,
     drawCurve: drawCurve,
@@ -35,19 +37,38 @@ Kindle.prototype.doAction = function(action) {
     var ctx = this.canvasContext;
     switch (action.type) {
         case 'drawLine':
+            if (action.width || action.color) {
+                ctx.save();
+                if (action.width) {
+                    ctx.lineWidth = action.width;
+                }
+                if (action.color) {
+                    ctx.strokeStyle = action.color;
+                }
+            }
             ctx.moveTo(action.start.x, action.start.y);
             ctx.lineTo(action.end.x, action.end.y);
             ctx.stroke();
+            if (action.width || action.color) {
+                ctx.restore();
+            }
             break;
         case 'drawCurve':
             ctx.moveTo(action.start.x, action.start.y);
             ctx.quadraticCurveTo(action.control.x, action.control.y, action.end.x, action.end.y);
             ctx.stroke();
             break;
-        case 'circleFill':
+        case 'arc':
+            if (action.color) {
+                ctx.save();
+                ctx.fillStyle = action.color;
+            }
             ctx.beginPath();
             ctx.arc(action.x, action.y, action.r, 0, 2 * Math.PI);
             ctx.fill();
+            if (action.color) {
+                ctx.restore();
+            }
             break;
         case 'appendDiv':
             document.body.appendChild(action.element);
@@ -85,34 +106,36 @@ Kindle.prototype.drawScreen = function() {
 
 Kindle.prototype.drawKeys = function() {
     var leftDot = {
-        type: 'circleFill',
+        type: 'arc',
         x: this.padX + (this.PAD_WIDTH - this.SCREEN_WIDTH) / 4,
         y: this.padY + this.PAD_HEIGHT / 3,
-        r: this.KEY_DOT_RADIUS
+        r: this.KEY_DOT_RADIUS,
+        color: this.KEY_COLOR
     };
 
     var rightDot = {
-        type: 'circleFill',
+        type: 'arc',
         x: this.padX + this.PAD_WIDTH - (this.PAD_WIDTH - this.SCREEN_WIDTH) / 4,
         y: this.padY + this.PAD_HEIGHT / 3,
-        r: this.KEY_DOT_RADIUS
+        r: this.KEY_DOT_RADIUS,
+        color: this.KEY_COLOR
     };
 
     var lineStartY = this.padY + this.PAD_HEIGHT / 2;
     var lineEndY = this.padY + this.PAD_HEIGHT / 2 + this.KEY_LINE_HEIGHT;
 
     this.addAction(leftDot);
-    this.drawLine(leftDot.x, lineStartY, leftDot.x, lineEndY);
+    this.drawLine(leftDot.x, lineStartY, leftDot.x, lineEndY, this.KEY_LINE_WIDTH, this.KEY_COLOR);
 
     this.addAction(rightDot);
-    this.drawLine(rightDot.x, lineStartY, rightDot.x, lineEndY);
+    this.drawLine(rightDot.x, lineStartY, rightDot.x, lineEndY, this.KEY_LINE_WIDTH, this.KEY_COLOR);
 };
 
 Kindle.prototype.drawLogo = function() {
 
 };
 
-function drawLine(x0, y0, x1, y1) {
+function drawLine(x0, y0, x1, y1, w, color) {
     var d = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0));
     var steps = d / CONSTANTS.lineLenghtDrawnPerFrame;
     if (steps < 1) steps = 1;
@@ -123,11 +146,20 @@ function drawLine(x0, y0, x1, y1) {
     var curEndX;
     var curEndY;
 
-    for (var i = 1; i < steps; i++) {
+    var action;
+
+    for (var i = 1; i < steps + 1; i++) {
         curEndX = x0 + (x1 - x0) * i / steps;
         curEndY = y0 + (y1 - y0) * i / steps;
 
-        this.addAction({
+        if (i >= steps) {
+            curEndX = x1;
+            curEndY = y1;
+        } else {
+            curEndX = x0 + (x1 - x0) * i / steps;
+            curEndY = y0 + (y1 - y0) * i / steps;
+        }
+        action = {
             type: 'drawLine',
             start: {
                 x: curStartX,
@@ -137,23 +169,18 @@ function drawLine(x0, y0, x1, y1) {
                 x: curEndX,
                 y: curEndY
             }
-        });
+        };
+        if (w) {
+            action.width = w;
+        }
+        if (color) {
+            action.color = color;
+        }
+        this.addAction(action);
 
         curStartX = curEndX;
         curStartY = curEndY;
     }
-
-    this.addAction({
-        type: 'drawLine',
-        start: {
-            x: curStartX,
-            y: curStartY
-        },
-        end: {
-            x: x1,
-            y: y1
-        }
-    });
 }
 
 function drawCurve(startX, startY, controlX, controlY, endX, endY) {
