@@ -93,19 +93,6 @@ Kindle.prototype.drawScreen = function() {
     this.screenX = (this.CANVAS_WIDTH - this.SCREEN_WIDTH) / 2;
     this.screenY = (this.CANVAS_HEIGHT - this.SCREEN_HEIGHT) * .4;
     this.drawRect(this.screenX, this.screenY, this.SCREEN_WIDTH, this.SCREEN_HEIGHT);
-
-    this.screenDiv = document.createElement('div');
-    this.screenDiv.className = 'screenDiv';
-    this.screenDiv.style.width = this.SCREEN_WIDTH + 'px';
-    this.screenDiv.style.height = this.SCREEN_HEIGHT + 'px';
-    this.screenDiv.style.left = this.canvasBound.left + this.screenX + 'px';
-    this.screenDiv.style.top = this.canvasBound.top + this.screenY + 'px';
-    this.screenDiv.style.fontSize = this.SCREEN_FONT_SIZE + 'px';
-
-    this.addAction({
-        type: 'appendDiv',
-        element: this.screenDiv
-    });
 };
 
 Kindle.prototype.drawKeys = function() {
@@ -149,6 +136,22 @@ Kindle.prototype.drawLogo = function() {
         y: this.screenY + this.SCREEN_HEIGHT + (this.PAD_HEIGHT - (this.screenY + this.SCREEN_HEIGHT + this.LOGO_FONT_SIZE)) / 2 + this.LOGO_FONT_SIZE,
         color: this.LOGO_COLOR,
         font: font
+    });
+};
+
+Kindle.prototype.appendScreenDiv = function() {
+    this.screenDiv = document.createElement('div');
+    this.screenDiv.className = 'screenDiv';
+    this.screenDiv.style.width = this.SCREEN_WIDTH - 2 + 'px';
+    this.screenDiv.style.height = this.SCREEN_HEIGHT - 2 + 'px';
+    this.screenDiv.style.left = this.canvasBound.left + this.screenX + 1 + 'px';
+    this.screenDiv.style.top = this.canvasBound.top + this.screenY + 1 + 'px';
+    this.screenDiv.style.fontSize = this.SCREEN_FONT_SIZE + 'px';
+    this.screenDiv.style.background = 'url(screen_lock.gif) no-repeat center';
+
+    this.addAction({
+        type: 'appendDiv',
+        element: this.screenDiv
     });
 };
 
@@ -262,3 +265,5 @@ kindle.drawPad();
 kindle.drawScreen();
 kindle.drawKeys();
 kindle.drawLogo();
+
+kindle.appendScreenDiv();
