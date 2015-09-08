@@ -4,11 +4,10 @@ var CONSTANTS = {
 
 function Kindle() {
     this.actionArr = [];
-
     this.canvas = document.getElementById('kindleCanvas');
     this.canvas.width = this.CANVAS_WIDTH;
     this.canvas.height = this.CANVAS_HEIGHT;
-    this.canvasContext = this.canvas.getContext('2d');
+    this.ctx = this.canvas.getContext('2d');
 }
 
 Kindle.prototype = {
@@ -38,7 +37,9 @@ Kindle.prototype.createButtonDiv = function(x, y, w, h) {
     div.style.top = y + 'px';
     div.style.width = w + 'px';
     div.style.height = h + 'px';
+    div.style.display = 'none';
     div.className = 'button';
+    div.addEventListener('mousedown', wrapFunction(this.buttonMouseDownHandler, this));
     return div;
 };
 
@@ -51,47 +52,50 @@ Kindle.prototype.canvasPostionToGlobalPosition = function(x, y) {
 };
 
 Kindle.prototype.doAction = function(action) {
-    var ctx = this.canvasContext;
     switch (action.type) {
         case 'drawLine':
             if (action.width || action.color) {
-                ctx.save();
+                this.ctx.save();
                 if (action.width) {
-                    ctx.lineWidth = action.width;
+                    this.ctx.lineWidth = action.width;
                 }
                 if (action.color) {
-                    ctx.strokeStyle = action.color;
+                    this.ctx.strokeStyle = action.color;
                 }
             }
-            ctx.moveTo(action.start.x, action.start.y);
-            ctx.lineTo(action.end.x, action.end.y);
-            ctx.stroke();
+            this.ctx.moveTo(action.start.x, action.start.y);
+            this.ctx.lineTo(action.end.x, action.end.y);
+            this.ctx.stroke();
             if (action.width || action.color) {
-                ctx.restore();
+                this.ctx.restore();
             }
             break;
         case 'drawCurve':
-            ctx.moveTo(action.start.x, action.start.y);
-            ctx.quadraticCurveTo(action.control.x, action.control.y, action.end.x, action.end.y);
-            ctx.stroke();
+            this.ctx.moveTo(action.start.x, action.start.y);
+            this.ctx.quadraticCurveTo(action.control.x, action.control.y, action.end.x, action.end.y);
+            this.ctx.stroke();
             break;
         case 'arc':
-            ctx.save();
-            ctx.fillStyle = action.color;
-            ctx.beginPath();
-            ctx.arc(action.x, action.y, action.r, 0, 2 * Math.PI);
-            ctx.fill();
-            ctx.restore();
+            this.ctx.save();
+            this.ctx.fillStyle = action.color;
+            this.ctx.beginPath();
+            this.ctx.arc(action.x, action.y, action.r, 0, 2 * Math.PI);
+            this.ctx.fill();
+            this.ctx.restore();
             break;
         case 'drawText':
-            ctx.save();
-            ctx.font = action.font;
-            ctx.fillStyle = action.color;
-            ctx.fillText(action.text, action.x, action.y);
-            ctx.restore();
+            this.ctx.save();
+            this.ctx.font = action.font;
+            this.ctx.fillStyle = action.color;
+            this.ctx.fillText(action.text, action.x, action.y);
+            this.ctx.restore();
             break;
         case 'showDiv':
-            action.element.style.opacity = 1;
+            if (action.prop == 'opacity') {
+                action.element.style.opacity = 1;
+            } else if (action.prop == 'display') {
+                action.element.style.display = 'block';
+            }
             break;
         default:
             break;
@@ -101,7 +105,6 @@ Kindle.prototype.doAction = function(action) {
 Kindle.prototype.drawPad = function() {
     this.padX = (this.CANVAS_WIDTH - this.PAD_WIDTH) / 2;
     this.padY = (this.CANVAS_HEIGHT - this.PAD_HEIGHT) / 2;
-
     this.drawRoundRect(this.padX, this.padY, this.PAD_WIDTH, this.PAD_HEIGHT, this.PAD_RADIUS);
 };
 
@@ -111,16 +114,18 @@ Kindle.prototype.drawScreen = function() {
     this.drawRect(this.screenX, this.screenY, this.SCREEN_WIDTH, this.SCREEN_HEIGHT);
 
     var globalPosition = this.canvasPostionToGlobalPosition(this.screenX, this.screenY);
-    this.screenDiv = document.createElement('div');
-    this.screenDiv.style.position = 'absolute';
-    this.screenDiv.style.opacity = 0;
-    this.screenDiv.style.left = globalPosition.x + 'px';
-    this.screenDiv.style.top = globalPosition.y + 'px';
-    this.screenDiv.style.width = this.SCREEN_WIDTH + 'px';
-    this.screenDiv.style.height = this.SCREEN_HEIGHT + 'px';
-    this.screenDiv.style.background = 'url(screen_lock.gif) center no-repeat';
-    this.screenDiv.style.transition = 'opacity 1s ease-in-out';
-    document.body.appendChild(this.screenDiv);
+    var div = document.createElement('div');
+    div.style.position = 'absolute';
+    div.style.opacity = 0;
+    div.style.left = globalPosition.x + 'px';
+    div.style.top = globalPosition.y + 'px';
+    div.style.width = this.SCREEN_WIDTH + 'px';
+    div.style.height = this.SCREEN_HEIGHT + 'px';
+    div.style.background = 'url(screen_lock.gif) center no-repeat';
+    div.style.transition = 'opacity 1s ease-in-out';
+    div.addEventListener('mousedown', wrapFunction(this.screenLockMouseDownHandler, this));
+    document.body.appendChild(div);
+    this.screenLockDiv = div;
 };
 
 Kindle.prototype.drawKeys = function() {
@@ -172,10 +177,10 @@ Kindle.prototype.drawKeys = function() {
 Kindle.prototype.drawLogo = function() {
     var logo = 'kindle';
     var font = this.LOGO_FONT_SIZE + 'px Arial';
-    this.canvasContext.save();
-    this.canvasContext.font = font;
-    var textWidth = this.canvasContext.measureText(logo).width;
-    this.canvasContext.restore();
+    this.ctx.save();
+    this.ctx.font = font;
+    var textWidth = this.ctx.measureText(logo).width;
+    this.ctx.restore();
     this.addAction({
         type: 'drawText',
         text: logo,
@@ -186,11 +191,36 @@ Kindle.prototype.drawLogo = function() {
     });
 };
 
-Kindle.prototype.showScreenDiv = function() {
+Kindle.prototype.showScreenLockDiv = function() {
     this.addAction({
         type: 'showDiv',
-        element: this.screenDiv
+        prop: 'opacity',
+        element: this.screenLockDiv
     });
+};
+
+Kindle.prototype.showButtons = function() {
+    var arr = [this.leftDotDiv, this.rightDotDiv, this.leftLineDiv, this.rightLineDiv];
+    for (var i = arr.length - 1; i >= 0; i--) {
+        this.addAction({
+            type: 'showDiv',
+            prop: 'display',
+            element: arr[i]
+        });
+    }
+};
+
+Kindle.prototype.screenLockMouseDownHandler = function(e) {
+    console.log('screen lock div mouse down ' + e);
+};
+
+Kindle.prototype.buttonMouseDownHandler = function(e) {
+    var target = e.target;
+    if (target === this.leftDotDiv || target === this.rightDotDiv) {
+        console.log('button div mouse down (dot)');
+    } else if (target === this.leftLineDiv || target === this.rightLineDiv) {
+        console.log('button div mouse down (line)');
+    }
 };
 
 function drawLine(x0, y0, x1, y1, w, color) {
@@ -288,10 +318,16 @@ function onFrame() {
     if (kindle.actionArr.length > 0) requestAnimationFrame(onFrame);
 }
 
+function wrapFunction(func, scope) {
+    return function() {
+        func.apply(scope, arguments);
+    };
+}
+
 var kindle = new Kindle();
 kindle.drawPad();
 kindle.drawScreen();
 kindle.drawKeys();
 kindle.drawLogo();
-
-kindle.showScreenDiv();
+kindle.showScreenLockDiv();
+kindle.showButtons();
