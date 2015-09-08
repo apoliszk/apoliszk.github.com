@@ -13,7 +13,7 @@ function Kindle() {
 }
 
 Kindle.prototype = {
-    LOGO_FONT_SIZE: 70,
+    LOGO_FONT_SIZE: 60,
     SCREEN_FONT_SIZE: 14,
     CANVAS_WIDTH: 585,
     CANVAS_HEIGHT: 820,
@@ -26,6 +26,7 @@ Kindle.prototype = {
     KEY_LINE_WIDTH: 2,
     KEY_LINE_HEIGHT: 162,
     KEY_COLOR: '#999',
+    LOGO_COLOR: '#999',
     addAction: addAction,
     drawLine: drawLine,
     drawCurve: drawCurve,
@@ -59,16 +60,19 @@ Kindle.prototype.doAction = function(action) {
             ctx.stroke();
             break;
         case 'arc':
-            if (action.color) {
-                ctx.save();
-                ctx.fillStyle = action.color;
-            }
+            ctx.save();
+            ctx.fillStyle = action.color;
             ctx.beginPath();
             ctx.arc(action.x, action.y, action.r, 0, 2 * Math.PI);
             ctx.fill();
-            if (action.color) {
-                ctx.restore();
-            }
+            ctx.restore();
+            break;
+        case 'drawText':
+            ctx.save();
+            ctx.font = action.font;
+            ctx.fillStyle = action.color;
+            ctx.fillText(action.text, action.x, action.y);
+            ctx.restore();
             break;
         case 'appendDiv':
             document.body.appendChild(action.element);
@@ -132,7 +136,20 @@ Kindle.prototype.drawKeys = function() {
 };
 
 Kindle.prototype.drawLogo = function() {
-
+    var logo = 'kindle';
+    var font = this.LOGO_FONT_SIZE + 'px Verdana';
+    this.canvasContext.save();
+    this.canvasContext.font = font;
+    var textWidth = this.canvasContext.measureText(logo).width;
+    this.canvasContext.restore();
+    this.addAction({
+        type: 'drawText',
+        text: logo,
+        x: (this.CANVAS_WIDTH - textWidth) / 2,
+        y: this.screenY + this.SCREEN_HEIGHT + (this.PAD_HEIGHT - (this.screenY + this.SCREEN_HEIGHT + this.LOGO_FONT_SIZE)) / 2 + this.LOGO_FONT_SIZE,
+        color: this.LOGO_COLOR,
+        font: font
+    });
 };
 
 function drawLine(x0, y0, x1, y1, w, color) {
