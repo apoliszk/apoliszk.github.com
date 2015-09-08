@@ -74,8 +74,8 @@ Kindle.prototype.doAction = function(action) {
             ctx.fillText(action.text, action.x, action.y);
             ctx.restore();
             break;
-        case 'appendDiv':
-            document.body.appendChild(action.element);
+        case 'showDiv':
+            action.element.style.opacity = 1;
             break;
         default:
             break;
@@ -148,9 +148,12 @@ Kindle.prototype.appendScreenDiv = function() {
     this.screenDiv.style.top = this.canvasBound.top + this.screenY + 1 + 'px';
     this.screenDiv.style.fontSize = this.SCREEN_FONT_SIZE + 'px';
     this.screenDiv.style.background = 'url(screen_lock.gif) no-repeat center';
+    this.screenDiv.style.opacity = 0;
+    this.screenDiv.style.transition = 'opacity 1s ease-in-out';
+    document.body.appendChild(this.screenDiv);
 
     this.addAction({
-        type: 'appendDiv',
+        type: 'showDiv',
         element: this.screenDiv
     });
 };
