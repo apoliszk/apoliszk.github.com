@@ -70,16 +70,16 @@ Kindle.prototype.drawScreen = function() {
     this.drawRect(this.screenX, this.screenY, this.SCREEN_WIDTH, this.SCREEN_HEIGHT);
 
     this.screenDiv = document.createElement('div');
-    screenDiv.className = 'screenDiv';
-    screenDiv.style.width = this.SCREEN_WIDTH + 'px';
-    screenDiv.style.height = this.SCREEN_HEIGHT + 'px';
-    screenDiv.style.left = this.canvasBound.left + this.screenX + 'px';
-    screenDiv.style.top = this.canvasBound.top + this.screenY + 'px';
-    screenDiv.style.fontSize = this.SCREEN_FONT_SIZE + 'px';
+    this.screenDiv.className = 'screenDiv';
+    this.screenDiv.style.width = this.SCREEN_WIDTH + 'px';
+    this.screenDiv.style.height = this.SCREEN_HEIGHT + 'px';
+    this.screenDiv.style.left = this.canvasBound.left + this.screenX + 'px';
+    this.screenDiv.style.top = this.canvasBound.top + this.screenY + 'px';
+    this.screenDiv.style.fontSize = this.SCREEN_FONT_SIZE + 'px';
 
     this.addAction({
         type: 'appendDiv',
-        element: screenDiv
+        element: this.screenDiv
     });
 };
 
