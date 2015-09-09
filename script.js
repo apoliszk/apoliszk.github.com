@@ -5,23 +5,25 @@ function KindleScreen(kindle, rootDiv) {
 
     this.pwdPanelDiv = this.createScreenPwdPanelDiv();
     this.screenLockDiv = this.createScreenLockDiv();
+    this.pageMaskDiv = this.createPageMaskDiv();
     this.pageTopDiv = this.createPageDiv();
     this.pageBottomDiv = this.createPageDiv();
 
     rootDiv.appendChild(this.pageBottomDiv);
     rootDiv.appendChild(this.pageTopDiv);
+    rootDiv.appendChild(this.pageMaskDiv);
     rootDiv.appendChild(this.screenLockDiv);
     rootDiv.appendChild(this.pwdPanelDiv);
 
     this.curPageIndex = 0;
     this.pageData = [{
-        html: 'first page'
+        src: 'pages/page1.html'
     }, {
-        html: 'second page'
+        src: 'pages/page2.html'
     }, {
-        html: 'third page'
+        src: 'pages/page3.html'
     }, {
-        html: 'forth page'
+        src: 'pages/page4.html'
     }];
 }
 
@@ -73,11 +75,25 @@ KindleScreen.prototype.createScreenLockDiv = function() {
     return div;
 };
 
+KindleScreen.prototype.createPageMaskDiv = function() {
+    var div = this.createDivForScreen();
+    div.style.background = '#rgba(0, 0, 0, 0)';
+    return div;
+};
+
 KindleScreen.prototype.createPageDiv = function() {
     var div = this.createDivForScreen();
     div.style.opacity = 0;
     div.style.background = '#fff';
     div.style.transition = 'opacity 1s ease-in-out';
+
+    var iframe = document.createElement('iframe');
+    iframe.width = '100%';
+    iframe.height = '100%';
+    iframe.frameBorder = '0';
+    iframe.scrolling = 'no';
+    div.appendChild(iframe);
+
     return div;
 };
 
@@ -117,43 +133,47 @@ KindleScreen.prototype.hideScreenLock = function() {
     this.currentStatus = KindleScreen.STATUS.VIEW_PAGES;
 };
 
-KindleScreen.prototype.showPage = function() {
+KindleScreen.prototype.showPage = function(isTurnPage) {
     if (!this.curPageDiv) {
         this.curPageDiv = this.pageTopDiv;
         this.idlePageDiv = this.pageBottomDiv;
     }
-    this.curPageDiv.innerHTML = this.pageData[this.curPageIndex].html;
+    this.curPageDiv.children[0].src = this.pageData[this.curPageIndex].src;
     this.kindle.addAction({
         type: 'showDiv',
         prop: 'opacity',
         element: this.curPageDiv
     });
-    this.kindle.addAction({
-        type: 'hideDiv',
-        prop: 'opacity',
-        element: this.idlePageDiv
-    });
+    if (isTurnPage) {
+        this.kindle.addAction({
+            type: 'hideDiv',
+            prop: 'opacity',
+            element: this.idlePageDiv
+        });
+    }
     this.currentStatus = KindleScreen.STATUS.VIEW_PAGES;
 };
 
 KindleScreen.prototype.showNextPage = function() {
     if (this.curPageIndex < this.pageData.length - 1) {
         this.curPageIndex++;
-        var temp = this.curPageDiv;
-        this.curPageDiv = this.idlePageDiv;
-        this.idlePageDiv = temp;
-        this.showPage();
+        this.swapIdleAndCurrentPage();
+        this.showPage(true);
     }
 };
 
 KindleScreen.prototype.showPrePage = function() {
     if (this.curPageIndex > 0) {
         this.curPageIndex--;
-        var temp = this.curPageDiv;
-        this.curPageDiv = this.idlePageDiv;
-        this.idlePageDiv = temp;
-        this.showPage();
+        this.swapIdleAndCurrentPage();
+        this.showPage(true);
     }
+};
+
+KindleScreen.prototype.swapIdleAndCurrentPage = function() {
+    var temp = this.curPageDiv;
+    this.curPageDiv = this.idlePageDiv;
+    this.idlePageDiv = temp;
 };
 
 KindleScreen.prototype.handleUserInteract = function(type) {
@@ -229,9 +249,9 @@ Kindle.prototype.createButtonDiv = function(w, h) {
     div.style.width = w + 'px';
     div.style.height = h + 'px';
     div.style.display = 'none';
+    div.style.borderRadius = Kindle.BUTTON_RADIUS + 'px';
     div.className = 'button';
     div.addEventListener('mousedown', wrapFunction(this.mouseDownHandler, this));
-    div.style.borderRadius = Kindle.BUTTON_RADIUS + 'px';
     return div;
 };
 
@@ -470,7 +490,12 @@ Kindle.prototype.mouseDownHandler = function(e) {
     } else if (target === this.leftLineDiv || target === this.rightLineDiv) {
         this.screen.handleUserInteract(KindleScreen.ACTION_TYPE.NEXT_PAGE);
     } else if (e.currentTarget === this.screen.rootDiv) {
-        this.screen.handleUserInteract(KindleScreen.ACTION_TYPE.NEXT_PAGE);
+        var mouseDownX = e.clientX + document.body.scrollLeft;
+        if (mouseDownX > this.canvasPostionToGlobalPosition(this.screenX, 0).x + Kindle.SCREEN_WIDTH / 3) {
+            this.screen.handleUserInteract(KindleScreen.ACTION_TYPE.NEXT_PAGE);
+        } else {
+            this.screen.handleUserInteract(KindleScreen.ACTION_TYPE.PRE_PAGE);
+        }
     }
 };
 
