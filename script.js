@@ -29,7 +29,7 @@ function KindleScreen(kindle, rootDiv) {
 
 KindleScreen.SCREEN_LOCK_TIME = 15000;
 
-KindleScreen.MINIUM_INTERACT_INTERVAL = 2000;
+KindleScreen.MINIUM_INTERACT_INTERVAL = 1500;
 
 KindleScreen.STATUS = {
     LOCKED: 'LOCKED',
@@ -59,7 +59,36 @@ KindleScreen.prototype.createScreenPwdPanelDiv = function() {
     var div = this.createDivForScreen();
     div.style.visibility = 'hidden';
     div.style.background = 'rgba(0, 0, 0, 0)';
-    div.innerHTML = "Password Panel Page";
+
+    var panel = document.createElement('div');
+    panel.style.position = 'relative';
+    panel.style.width = '80%';
+    panel.style.height = '60%';
+    panel.style.border = '2px solid';
+    panel.style.borderRadius = '4px';
+    panel.style.background = '#fff';
+    panel.style.top = Kindle.SCREEN_HEIGHT / 5 + 'px';
+    panel.style.left = Kindle.SCREEN_WIDTH / 10 + 'px';
+    div.appendChild(panel);
+
+    var panelHeader = document.createElement('div');
+
+    var panelCloseBtn = document.createElement('h2');
+    panelCloseBtn.id = 'pwdPanelCloseBtn';
+    panelCloseBtn.innerHTML = '×';
+    panelCloseBtn.className = 'button';
+    panelCloseBtn.style.padding = '0px 8px';
+    panelCloseBtn.style.marginTop = '8px';
+    panelCloseBtn.style.float = 'right';
+    panelHeader.appendChild(panelCloseBtn);
+
+    var panelTitle = document.createElement('h2');
+    panelTitle.style.padding = '8px';
+    panelTitle.style.borderBottom = '2px solid';
+    panelTitle.innerHTML = '输入密码';
+    panelHeader.appendChild(panelTitle);
+
+    panel.appendChild(panelHeader);
 
     div.addEventListener('mousedown', wrapFunction(this.pwdPanelMouseDownHandler, this));
 
@@ -67,7 +96,11 @@ KindleScreen.prototype.createScreenPwdPanelDiv = function() {
 };
 
 KindleScreen.prototype.pwdPanelMouseDownHandler = function(e) {
-    this.handleUserInteract(KindleScreen.ACTION_TYPE.PWD_ENTER);
+    if (e.target.id === 'pwdPanelCloseBtn') {
+        this.handleUserInteract(KindleScreen.ACTION_TYPE.PWD_CANCEL);
+    } else if (true) {
+        this.handleUserInteract(KindleScreen.ACTION_TYPE.PWD_ENTER);
+    }
     e.stopPropagation();
 };
 
@@ -182,7 +215,7 @@ KindleScreen.prototype.swapIdleAndCurrentPage = function() {
 
 KindleScreen.prototype.handleUserInteract = function(type) {
     var curTime = new Date().getTime();
-    if (this.lastInteractTime && curTime - this.lastInteractTime < KindleScreen.MINIUM_INTERACT_INTERVAL) {
+    if (this.lastInteractTime && curTime - this.lastInteractTime < KindleScreen.MINIUM_INTERACT_INTERVAL && type != KindleScreen.ACTION_TYPE.PWD_CANCEL) {
 
     } else {
         this.lastInteractTime = curTime;
@@ -268,6 +301,7 @@ Kindle.prototype.createButtonDiv = function(w, h) {
     div.style.height = h + 'px';
     div.style.display = 'none';
     div.style.borderRadius = Kindle.BUTTON_RADIUS + 'px';
+    div.style.position = 'absolute';
     div.className = 'button';
     div.addEventListener('mousedown', wrapFunction(this.mouseDownHandler, this));
     return div;
