@@ -361,18 +361,20 @@ function wrapFunction(func, scope) {
 // ================= start =================
 window.onload = function() {
     kindle = new Kindle();
-    kindle.putToCenter();
-    kindle.drawPad();
-    kindle.drawScreen();
-    kindle.drawButtons();
-    kindle.drawLogo();
-    kindle.placeDivs();
-    kindle.showScreenLockDiv();
-    kindle.showButtons();
+    if (kindle.ctx) {
+        kindle.putToCenter();
+        kindle.drawPad();
+        kindle.drawScreen();
+        kindle.drawButtons();
+        kindle.drawLogo();
+        kindle.placeDivs();
+        kindle.showScreenLockDiv();
+        kindle.showButtons();
+    }
 };
 
 window.onresize = function() {
-    if (kindle) {
+    if (kindle && kindle.ctx) {
         kindle.putToCenter();
         kindle.placeDivs();
     }
