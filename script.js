@@ -27,6 +27,10 @@ function KindleScreen(kindle, rootDiv) {
     }];
 }
 
+KindleScreen.SCREEN_LOCK_TIME = 15000;
+
+KindleScreen.MINIUM_INTERACT_INTERVAL = 2000;
+
 KindleScreen.STATUS = {
     LOCKED: 'LOCKED',
     PASSWORD: 'PASSWORD',
@@ -177,28 +181,42 @@ KindleScreen.prototype.swapIdleAndCurrentPage = function() {
 };
 
 KindleScreen.prototype.handleUserInteract = function(type) {
-    if (this.currentStatus === KindleScreen.STATUS.LOCKED) {
-        this.showPasswordPanel();
-    } else if (this.currentStatus === KindleScreen.STATUS.PASSWORD) {
-        if (type === KindleScreen.ACTION_TYPE.PWD_ENTER) {
-            if (true) {
-                this.hidePasswordPanel();
-                this.hideScreenLock();
-                this.showPage();
-            } else {
+    var curTime = new Date().getTime();
+    if (this.lastInteractTime && curTime - this.lastInteractTime < KindleScreen.MINIUM_INTERACT_INTERVAL) {
 
+    } else {
+        this.lastInteractTime = curTime;
+
+        if (this.currentStatus === KindleScreen.STATUS.LOCKED) {
+            this.showPasswordPanel();
+        } else if (this.currentStatus === KindleScreen.STATUS.PASSWORD) {
+            if (type === KindleScreen.ACTION_TYPE.PWD_ENTER) {
+                if (true) {
+                    this.hidePasswordPanel();
+                    this.hideScreenLock();
+                    this.showPage();
+                } else {
+
+                }
+            } else if (type === KindleScreen.ACTION_TYPE.PWD_CANCEL) {
+                this.hidePasswordPanel();
             }
-        } else if (type === KindleScreen.ACTION_TYPE.PWD_CANCEL) {
-            this.hidePasswordPanel();
+        } else if (this.currentStatus === KindleScreen.STATUS.VIEW_PAGES) {
+            if (type === KindleScreen.ACTION_TYPE.NEXT_PAGE) {
+                this.showNextPage();
+            } else if (type === KindleScreen.ACTION_TYPE.PRE_PAGE) {
+                this.showPrePage();
+            } else if (type === KindleScreen.ACTION_TYPE.LOCK) {
+                this.showScreenLock();
+            }
         }
-    } else if (this.currentStatus === KindleScreen.STATUS.VIEW_PAGES) {
-        if (type === KindleScreen.ACTION_TYPE.NEXT_PAGE) {
-            this.showNextPage();
-        } else if (type === KindleScreen.ACTION_TYPE.PRE_PAGE) {
-            this.showPrePage();
-        } else if (type === KindleScreen.ACTION_TYPE.LOCK) {
-            this.showScreenLock();
+    }
+    if (this.currentStatus === KindleScreen.STATUS.VIEW_PAGES) {
+        if (this.lockScreenTimeoutId) {
+            clearTimeout(this.lockScreenTimeoutId);
+            this.lockScreenTimeoutId = 0;
         }
+        this.lockScreenTimeoutId = setTimeout(wrapFunction(this.showScreenLock, this), KindleScreen.SCREEN_LOCK_TIME);
     }
 };
 // =================Class KindleScreen End=================
