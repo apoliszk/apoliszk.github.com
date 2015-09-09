@@ -1,32 +1,221 @@
-var CONSTANTS = {
-    lineLenghtDrawnPerFrame: 20
+// =================Class KindleScreen Begin=================
+function KindleScreen(kindle, rootDiv) {
+    this.kindle = kindle;
+    this.rootDiv = rootDiv;
+
+    this.pwdPanelDiv = this.createScreenPwdPanelDiv();
+    this.screenLockDiv = this.createScreenLockDiv();
+    this.pageTopDiv = this.createPageDiv();
+    this.pageBottomDiv = this.createPageDiv();
+
+    rootDiv.appendChild(this.pageBottomDiv);
+    rootDiv.appendChild(this.pageTopDiv);
+    rootDiv.appendChild(this.screenLockDiv);
+    rootDiv.appendChild(this.pwdPanelDiv);
+
+    this.curPageIndex = 0;
+    this.pageData = [{
+        html: 'first page',
+        pageNum: 1
+    }, {
+        html: 'second page',
+        pageNum: 2
+    }, {
+        html: 'third page',
+        pageNum: 3
+    }, {
+        html: 'forth page',
+        pageNum: 4
+    }];
+}
+
+KindleScreen.STATUS = {
+    LOCKED: 'LOCKED',
+    PASSWORD: 'PASSWORD',
+    VIEW_PAGES: 'VIEW_PAGES'
 };
 
+KindleScreen.ACTION_TYPE = {
+    NEXT_PAGE: 'NEXT_PAGE',
+    PRE_PAGE: 'PRE_PAGE',
+    PWD_ENTER: 'PWD_ENTER',
+    PWD_CANCEL: 'PWD_CANCEL',
+    LOCK: 'LOCK'
+};
+
+KindleScreen.prototype.createDivForScreen = function() {
+    var div = document.createElement('div');
+    div.style.width = '100%';
+    div.style.height = '100%';
+    div.style.position = 'absolute';
+    div.style.left = '0px';
+    div.style.top = '0px';
+    return div;
+};
+
+KindleScreen.prototype.createScreenPwdPanelDiv = function() {
+    var div = this.createDivForScreen();
+    div.style.visibility = 'hidden';
+    div.style.background = 'rgba(0, 0, 0, 0)';
+    div.innerHTML = "Password Panel Page";
+
+    div.addEventListener('mousedown', wrapFunction(this.pwdPanelMouseDownHandler, this));
+
+    return div;
+};
+
+KindleScreen.prototype.pwdPanelMouseDownHandler = function(e) {
+    this.handleUserInteract(KindleScreen.ACTION_TYPE.PWD_ENTER);
+    e.stopPropagation();
+};
+
+KindleScreen.prototype.createScreenLockDiv = function() {
+    var div = this.createDivForScreen();
+    div.style.opacity = 0;
+    div.style.background = 'url(screen_lock.gif) center no-repeat';
+    div.style.transition = 'opacity 1s ease-in-out';
+    return div;
+};
+
+KindleScreen.prototype.createPageDiv = function() {
+    var div = this.createDivForScreen();
+    div.style.opacity = 0;
+    div.style.background = '#fff';
+    div.style.transition = 'opacity 1s ease-in-out';
+    return div;
+};
+
+KindleScreen.prototype.showPasswordPanel = function() {
+    this.kindle.addAction({
+        type: 'showDiv',
+        prop: 'visibility',
+        element: this.pwdPanelDiv
+    });
+    this.currentStatus = KindleScreen.STATUS.PASSWORD;
+};
+
+KindleScreen.prototype.hidePasswordPanel = function() {
+    this.kindle.addAction({
+        type: 'hideDiv',
+        prop: 'visibility',
+        element: this.pwdPanelDiv
+    });
+    this.currentStatus = KindleScreen.STATUS.LOCKED;
+};
+
+KindleScreen.prototype.showScreenLock = function() {
+    this.kindle.addAction({
+        type: 'showDiv',
+        prop: 'opacity',
+        element: this.screenLockDiv
+    });
+    this.currentStatus = KindleScreen.STATUS.LOCKED;
+};
+
+KindleScreen.prototype.hideScreenLock = function() {
+    this.kindle.addAction({
+        type: 'hideDiv',
+        prop: 'opacity',
+        element: this.screenLockDiv
+    });
+    this.currentStatus = KindleScreen.STATUS.VIEW_PAGES;
+};
+
+KindleScreen.prototype.showPage = function() {
+    if (!this.curPageDiv) {
+        this.curPageDiv = this.pageTopDiv;
+        this.idlePageDiv = this.pageBottomDiv;
+    }
+    this.curPageDiv.innerHTML = this.pageData[this.curPageIndex].html;
+    this.kindle.addAction({
+        type: 'showDiv',
+        prop: 'opacity',
+        element: this.curPageDiv
+    });
+    this.kindle.addAction({
+        type: 'hideDiv',
+        prop: 'opacity',
+        element: this.idlePageDiv
+    });
+    this.currentStatus = KindleScreen.STATUS.VIEW_PAGES;
+};
+
+KindleScreen.prototype.showNextPage = function() {
+    if (this.curPageIndex < this.pageData.length - 1) {
+        this.curPageIndex++;
+        var temp = this.curPageDiv;
+        this.curPageDiv = this.idlePageDiv;
+        this.idlePageDiv = temp;
+        this.showPage();
+    } else {
+
+    }
+};
+
+KindleScreen.prototype.showPrePage = function() {
+    if (this.curPageIndex > 0) {
+        this.curPageIndex--;
+        var temp = this.curPageDiv;
+        this.curPageDiv = this.idlePageDiv;
+        this.idlePageDiv = temp;
+        this.showPage();
+    } else {
+
+    }
+};
+
+KindleScreen.prototype.handleUserInteract = function(type) {
+    if (this.currentStatus === KindleScreen.STATUS.LOCKED) {
+        this.showPasswordPanel();
+    } else if (this.currentStatus === KindleScreen.STATUS.PASSWORD) {
+        if (type === KindleScreen.ACTION_TYPE.PWD_ENTER) {
+            if (true) {
+                this.hidePasswordPanel();
+                this.hideScreenLock();
+                this.showPage();
+            } else {
+
+            }
+        } else if (type === KindleScreen.ACTION_TYPE.PWD_CANCEL) {
+            this.hidePasswordPanel();
+        }
+    } else if (this.currentStatus === KindleScreen.STATUS.VIEW_PAGES) {
+        if (type === KindleScreen.ACTION_TYPE.NEXT_PAGE) {
+            this.showNextPage();
+        } else if (type === KindleScreen.ACTION_TYPE.PRE_PAGE) {
+            this.showPrePage();
+        } else if (type === KindleScreen.ACTION_TYPE.LOCK) {
+            this.showScreenLock();
+        }
+    }
+};
+// =================Class KindleScreen End=================
+
+// =================Class Kindle Begin=================
 function Kindle() {
     this.actionArr = [];
     this.canvas = document.getElementById('kindleCanvas');
-    this.canvas.width = this.CANVAS_WIDTH;
-    this.canvas.height = this.CANVAS_HEIGHT;
+    this.canvas.width = Kindle.CANVAS_WIDTH;
+    this.canvas.height = Kindle.CANVAS_HEIGHT;
     this.ctx = this.canvas.getContext('2d');
 }
 
-Kindle.prototype = {
-    LOGO_FONT_SIZE: 60,
-    CANVAS_WIDTH: 585,
-    CANVAS_HEIGHT: 820,
-    PAD_WIDTH: 575,
-    PAD_HEIGHT: 810,
-    PAD_RADIUS: 40,
-    SCREEN_WIDTH: 460,
-    SCREEN_HEIGHT: 615,
-    KEY_DOT_RADIUS: 5,
-    KEY_LINE_WIDTH: 2,
-    KEY_LINE_HEIGHT: 162,
-    BUTTON_RADIUS: 15,
-    BUTTON_WIDTH: 30,
-    KEY_COLOR: '#999',
-    LOGO_COLOR: '#999'
-};
+Kindle.LINE_LENGTH_DRAWN_PER_FRAME = 20;
+Kindle.LOGO_FONT_SIZE = 60;
+Kindle.CANVAS_WIDTH = 585;
+Kindle.CANVAS_HEIGHT = 820;
+Kindle.PAD_WIDTH = 575;
+Kindle.PAD_HEIGHT = 810;
+Kindle.PAD_RADIUS = 40;
+Kindle.SCREEN_WIDTH = 460;
+Kindle.SCREEN_HEIGHT = 615;
+Kindle.KEY_DOT_RADIUS = 5;
+Kindle.KEY_LINE_WIDTH = 2;
+Kindle.KEY_LINE_HEIGHT = 162;
+Kindle.BUTTON_RADIUS = 15;
+Kindle.BUTTON_WIDTH = 30;
+Kindle.KEY_COLOR = '#999';
+Kindle.LOGO_COLOR = '#999';
 
 Kindle.prototype.addAction = function(action) {
     if (this.actionArr.length == 0) {
@@ -50,7 +239,7 @@ Kindle.prototype.createButtonDiv = function(w, h) {
     div.style.display = 'none';
     div.className = 'button';
     div.addEventListener('mousedown', wrapFunction(this.mouseDownHandler, this));
-    div.style.borderRadius = this.BUTTON_RADIUS + 'px';
+    div.style.borderRadius = Kindle.BUTTON_RADIUS + 'px';
     return div;
 };
 
@@ -94,10 +283,21 @@ Kindle.prototype.doAction = function(action) {
             this.ctx.restore();
             break;
         case 'showDiv':
-            if (action.prop == 'opacity') {
+            if (action.prop === 'opacity') {
                 action.element.style.opacity = 1;
-            } else if (action.prop == 'display') {
+            } else if (action.prop === 'display') {
                 action.element.style.display = 'block';
+            } else if (action.prop === 'visibility') {
+                action.element.style.visibility = 'visible';
+            }
+            break;
+        case 'hideDiv':
+            if (action.prop === 'opacity') {
+                action.element.style.opacity = 0;
+            } else if (action.prop === 'display') {
+                action.element.style.display = 'none';
+            } else if (action.prop === 'visibility') {
+                action.element.style.visibility = 'hidden';
             }
             break;
         default:
@@ -108,43 +308,43 @@ Kindle.prototype.doAction = function(action) {
 Kindle.prototype.drawButtons = function() {
     var leftDot = {
         type: 'arc',
-        x: this.padX + (this.PAD_WIDTH - this.SCREEN_WIDTH) / 4,
-        y: this.padY + this.PAD_HEIGHT / 3,
-        r: this.KEY_DOT_RADIUS,
-        color: this.KEY_COLOR
+        x: this.padX + (Kindle.PAD_WIDTH - Kindle.SCREEN_WIDTH) / 4,
+        y: this.padY + Kindle.PAD_HEIGHT / 3,
+        r: Kindle.KEY_DOT_RADIUS,
+        color: Kindle.KEY_COLOR
     };
     this.leftDotCenterX = leftDot.x;
     this.leftDotCenterY = leftDot.y;
-    this.leftDotDiv = this.createButtonDiv(this.BUTTON_WIDTH, this.BUTTON_WIDTH);
+    this.leftDotDiv = this.createButtonDiv(Kindle.BUTTON_WIDTH, Kindle.BUTTON_WIDTH);
     document.body.appendChild(this.leftDotDiv);
 
     var rightDot = {
         type: 'arc',
-        x: this.padX + this.PAD_WIDTH - (this.PAD_WIDTH - this.SCREEN_WIDTH) / 4,
-        y: this.padY + this.PAD_HEIGHT / 3,
-        r: this.KEY_DOT_RADIUS,
-        color: this.KEY_COLOR
+        x: this.padX + Kindle.PAD_WIDTH - (Kindle.PAD_WIDTH - Kindle.SCREEN_WIDTH) / 4,
+        y: this.padY + Kindle.PAD_HEIGHT / 3,
+        r: Kindle.KEY_DOT_RADIUS,
+        color: Kindle.KEY_COLOR
     };
     this.rightDotCenterX = rightDot.x;
     this.rightDotCenterY = rightDot.y;
-    this.rightDotDiv = this.createButtonDiv(this.BUTTON_WIDTH, this.BUTTON_WIDTH);
+    this.rightDotDiv = this.createButtonDiv(Kindle.BUTTON_WIDTH, Kindle.BUTTON_WIDTH);
     document.body.appendChild(this.rightDotDiv);
 
-    var lineStartY = this.padY + this.PAD_HEIGHT / 2;
-    var lineEndY = this.padY + this.PAD_HEIGHT / 2 + this.KEY_LINE_HEIGHT;
+    var lineStartY = this.padY + Kindle.PAD_HEIGHT / 2;
+    var lineEndY = this.padY + Kindle.PAD_HEIGHT / 2 + Kindle.KEY_LINE_HEIGHT;
 
     this.addAction(leftDot);
-    this.drawLine(leftDot.x, lineStartY, leftDot.x, lineEndY, this.KEY_LINE_WIDTH, this.KEY_COLOR);
+    this.drawLine(leftDot.x, lineStartY, leftDot.x, lineEndY, Kindle.KEY_LINE_WIDTH, Kindle.KEY_COLOR);
     this.leftLineCenterX = leftDot.x;
     this.leftLineY = lineStartY;
-    this.leftLineDiv = this.createButtonDiv(this.BUTTON_WIDTH, lineEndY - lineStartY);
+    this.leftLineDiv = this.createButtonDiv(Kindle.BUTTON_WIDTH, lineEndY - lineStartY);
     document.body.appendChild(this.leftLineDiv);
 
     this.addAction(rightDot);
-    this.drawLine(rightDot.x, lineStartY, rightDot.x, lineEndY, this.KEY_LINE_WIDTH, this.KEY_COLOR);
+    this.drawLine(rightDot.x, lineStartY, rightDot.x, lineEndY, Kindle.KEY_LINE_WIDTH, Kindle.KEY_COLOR);
     this.rightLineCenterX = rightDot.x;
     this.rightLineY = lineStartY;
-    this.rightLineDiv = this.createButtonDiv(this.BUTTON_WIDTH, lineEndY - lineStartY);
+    this.rightLineDiv = this.createButtonDiv(Kindle.BUTTON_WIDTH, lineEndY - lineStartY);
     document.body.appendChild(this.rightLineDiv);
 };
 
@@ -168,7 +368,7 @@ Kindle.prototype.drawCurve = function(startX, startY, controlX, controlY, endX, 
 
 Kindle.prototype.drawLine = function(x0, y0, x1, y1, w, color) {
     var d = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0));
-    var steps = d / CONSTANTS.lineLenghtDrawnPerFrame;
+    var steps = d / Kindle.LINE_LENGTH_DRAWN_PER_FRAME;
     if (steps < 1) steps = 1;
 
     var curStartX = x0;
@@ -213,7 +413,7 @@ Kindle.prototype.drawLine = function(x0, y0, x1, y1, w, color) {
 
 Kindle.prototype.drawLogo = function() {
     var logo = 'kindle';
-    var font = this.LOGO_FONT_SIZE + 'px Arial';
+    var font = Kindle.LOGO_FONT_SIZE + 'px Arial';
     this.ctx.save();
     this.ctx.font = font;
     var textWidth = this.ctx.measureText(logo).width;
@@ -221,17 +421,17 @@ Kindle.prototype.drawLogo = function() {
     this.addAction({
         type: 'drawText',
         text: logo,
-        x: (this.CANVAS_WIDTH - textWidth) / 2,
-        y: this.screenY + this.SCREEN_HEIGHT + (this.PAD_HEIGHT - (this.screenY + this.SCREEN_HEIGHT + this.LOGO_FONT_SIZE)) / 2 + this.LOGO_FONT_SIZE,
-        color: this.LOGO_COLOR,
+        x: (Kindle.CANVAS_WIDTH - textWidth) / 2,
+        y: this.screenY + Kindle.SCREEN_HEIGHT + (Kindle.PAD_HEIGHT - (this.screenY + Kindle.SCREEN_HEIGHT + Kindle.LOGO_FONT_SIZE)) / 2 + Kindle.LOGO_FONT_SIZE,
+        color: Kindle.LOGO_COLOR,
         font: font
     });
 };
 
 Kindle.prototype.drawPad = function() {
-    this.padX = (this.CANVAS_WIDTH - this.PAD_WIDTH) / 2;
-    this.padY = (this.CANVAS_HEIGHT - this.PAD_HEIGHT) / 2;
-    this.drawRoundRect(this.padX, this.padY, this.PAD_WIDTH, this.PAD_HEIGHT, this.PAD_RADIUS);
+    this.padX = (Kindle.CANVAS_WIDTH - Kindle.PAD_WIDTH) / 2;
+    this.padY = (Kindle.CANVAS_HEIGHT - Kindle.PAD_HEIGHT) / 2;
+    this.drawRoundRect(this.padX, this.padY, Kindle.PAD_WIDTH, Kindle.PAD_HEIGHT, Kindle.PAD_RADIUS);
 };
 
 Kindle.prototype.drawRect = function(x, y, w, h) {
@@ -253,57 +453,59 @@ Kindle.prototype.drawRoundRect = function(x, y, w, h, r) {
 };
 
 Kindle.prototype.drawScreen = function() {
-    this.screenX = (this.CANVAS_WIDTH - this.SCREEN_WIDTH) / 2;
-    this.screenY = (this.CANVAS_HEIGHT - this.SCREEN_HEIGHT) * .4;
-    this.drawRect(this.screenX, this.screenY, this.SCREEN_WIDTH, this.SCREEN_HEIGHT);
+    this.screenX = (Kindle.CANVAS_WIDTH - Kindle.SCREEN_WIDTH) / 2;
+    this.screenY = (Kindle.CANVAS_HEIGHT - Kindle.SCREEN_HEIGHT) * .4;
+    this.drawRect(this.screenX, this.screenY, Kindle.SCREEN_WIDTH, Kindle.SCREEN_HEIGHT);
 
+    this.initScreenDiv();
+};
+
+Kindle.prototype.initScreenDiv = function() {
     var div = document.createElement('div');
-    div.style.position = 'absolute';
-    div.style.opacity = 0;
-    div.style.width = this.SCREEN_WIDTH + 'px';
-    div.style.height = this.SCREEN_HEIGHT + 'px';
-    div.style.background = 'url(screen_lock.gif) center no-repeat';
-    div.style.transition = 'opacity 1s ease-in-out';
+    div.style.position = 'relative';
+    div.style.width = Kindle.SCREEN_WIDTH - 2 + 'px';
+    div.style.height = Kindle.SCREEN_HEIGHT - 2 + 'px';
     div.addEventListener('mousedown', wrapFunction(this.mouseDownHandler, this));
     document.body.appendChild(div);
-    this.screenLockDiv = div;
+
+    this.screen = new KindleScreen(this, div);
 };
 
 Kindle.prototype.mouseDownHandler = function(e) {
     var target = e.target;
-    if (target === this.screenLockDiv) {
-        console.log('button div mouse down (screen)');
-    } else if (target === this.leftDotDiv || target === this.rightDotDiv) {
-        console.log('button div mouse down (dot)');
+    if (target === this.leftDotDiv || target === this.rightDotDiv) {
+        this.screen.handleUserInteract(KindleScreen.ACTION_TYPE.PRE_PAGE);
     } else if (target === this.leftLineDiv || target === this.rightLineDiv) {
-        console.log('button div mouse down (line)');
+        this.screen.handleUserInteract(KindleScreen.ACTION_TYPE.NEXT_PAGE);
+    } else if (e.currentTarget === this.screen.rootDiv) {
+        this.screen.handleUserInteract(KindleScreen.ACTION_TYPE.NEXT_PAGE);
     }
 };
 
 Kindle.prototype.placeDivs = function() {
     var globalPosition;
-    if (this.screenLockDiv) {
+    if (this.screen && this.screen.rootDiv) {
         globalPosition = this.canvasPostionToGlobalPosition(this.screenX, this.screenY);
-        this.screenLockDiv.style.left = globalPosition.x + 'px';
-        this.screenLockDiv.style.top = globalPosition.y + 'px';
+        this.screen.rootDiv.style.left = globalPosition.x + 1 + 'px';
+        this.screen.rootDiv.style.top = globalPosition.y + 1 + 'px';
     }
     if (this.leftDotDiv) {
-        globalPosition = this.canvasPostionToGlobalPosition(this.leftDotCenterX - this.BUTTON_RADIUS, this.leftDotCenterY - this.BUTTON_RADIUS);
+        globalPosition = this.canvasPostionToGlobalPosition(this.leftDotCenterX - Kindle.BUTTON_RADIUS, this.leftDotCenterY - Kindle.BUTTON_RADIUS);
         this.leftDotDiv.style.left = globalPosition.x + 'px';
         this.leftDotDiv.style.top = globalPosition.y + 'px';
     }
     if (this.rightDotDiv) {
-        globalPosition = this.canvasPostionToGlobalPosition(this.rightDotCenterX - this.BUTTON_RADIUS, this.rightDotCenterY - this.BUTTON_RADIUS);
+        globalPosition = this.canvasPostionToGlobalPosition(this.rightDotCenterX - Kindle.BUTTON_RADIUS, this.rightDotCenterY - Kindle.BUTTON_RADIUS);
         this.rightDotDiv.style.left = globalPosition.x + 'px';
         this.rightDotDiv.style.top = globalPosition.y + 'px';
     }
     if (this.leftLineDiv) {
-        globalPosition = this.canvasPostionToGlobalPosition(this.leftLineCenterX - this.BUTTON_RADIUS, this.leftLineY);
+        globalPosition = this.canvasPostionToGlobalPosition(this.leftLineCenterX - Kindle.BUTTON_RADIUS, this.leftLineY);
         this.leftLineDiv.style.left = globalPosition.x + 'px';
         this.leftLineDiv.style.top = globalPosition.y + 'px';
     }
     if (this.rightLineDiv) {
-        globalPosition = this.canvasPostionToGlobalPosition(this.rightLineCenterX - this.BUTTON_RADIUS, this.rightLineY);
+        globalPosition = this.canvasPostionToGlobalPosition(this.rightLineCenterX - Kindle.BUTTON_RADIUS, this.rightLineY);
         this.rightLineDiv.style.left = globalPosition.x + 'px';
         this.rightLineDiv.style.top = globalPosition.y + 'px';
     }
@@ -313,11 +515,11 @@ Kindle.prototype.putToCenter = function() {
     var w = window.innerWidth || document.documentElement.clientWidth;
     var h = window.innerHeight || document.documentElement.clientHeight;
 
-    if (w < this.CANVAS_WIDTH) w = this.CANVAS_WIDTH;
-    if (h < this.CANVAS_HEIGHT) h = this.CANVAS_HEIGHT;
+    if (w < Kindle.CANVAS_WIDTH) w = Kindle.CANVAS_WIDTH;
+    if (h < Kindle.CANVAS_HEIGHT) h = Kindle.CANVAS_HEIGHT;
 
-    var x = (w - this.CANVAS_WIDTH) / 2;
-    var y = (h - this.CANVAS_HEIGHT) / 2;
+    var x = (w - Kindle.CANVAS_WIDTH) / 2;
+    var y = (h - Kindle.CANVAS_HEIGHT) / 2;
 
     if (x < 0) x = 0;
     if (y < 0) y = 0;
@@ -336,15 +538,9 @@ Kindle.prototype.showButtons = function() {
         });
     }
 };
+// =================Class Kindle End=================
 
-Kindle.prototype.showScreenLockDiv = function() {
-    this.addAction({
-        type: 'showDiv',
-        prop: 'opacity',
-        element: this.screenLockDiv
-    });
-};
-
+// =================Global Function Begin=================
 function onFrame() {
     if (kindle.actionArr.length > 0) {
         kindle.doAction(kindle.actionArr.shift());
@@ -357,6 +553,7 @@ function wrapFunction(func, scope) {
         func.apply(scope, arguments);
     };
 }
+// =================Global Function End=================
 
 // ================= start =================
 window.onload = function() {
@@ -368,8 +565,8 @@ window.onload = function() {
         kindle.drawButtons();
         kindle.drawLogo();
         kindle.placeDivs();
-        kindle.showScreenLockDiv();
         kindle.showButtons();
+        kindle.screen.showScreenLock();
     }
 };
 
