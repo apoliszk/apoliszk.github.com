@@ -75,7 +75,7 @@ KindleScreen.prototype.createScreenPwdPanelDiv = function() {
 
     var panelCloseBtn = document.createElement('h2');
     panelCloseBtn.id = 'pwdPanelCloseBtn';
-    panelCloseBtn.innerHTML = 'X';
+    panelCloseBtn.innerHTML = '×';
     panelCloseBtn.className = 'button';
     panelCloseBtn.style.padding = '0px 8px';
     panelCloseBtn.style.marginTop = '8px';
