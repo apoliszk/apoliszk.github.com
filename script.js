@@ -15,17 +15,13 @@ function KindleScreen(kindle, rootDiv) {
 
     this.curPageIndex = 0;
     this.pageData = [{
-        html: 'first page',
-        pageNum: 1
+        html: 'first page'
     }, {
-        html: 'second page',
-        pageNum: 2
+        html: 'second page'
     }, {
-        html: 'third page',
-        pageNum: 3
+        html: 'third page'
     }, {
-        html: 'forth page',
-        pageNum: 4
+        html: 'forth page'
     }];
 }
 
@@ -147,8 +143,6 @@ KindleScreen.prototype.showNextPage = function() {
         this.curPageDiv = this.idlePageDiv;
         this.idlePageDiv = temp;
         this.showPage();
-    } else {
-
     }
 };
 
@@ -159,8 +153,6 @@ KindleScreen.prototype.showPrePage = function() {
         this.curPageDiv = this.idlePageDiv;
         this.idlePageDiv = temp;
         this.showPage();
-    } else {
-
     }
 };
 
