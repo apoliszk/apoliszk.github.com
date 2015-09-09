@@ -90,12 +90,12 @@ KindleScreen.prototype.createScreenPwdPanelDiv = function() {
 
     panel.appendChild(panelHeader);
 
-    div.addEventListener('mousedown', wrapFunction(this.pwdPanelMouseDownHandler, this));
+    div.addEventListener('click', wrapFunction(this.pwdPanelMouseClickHandler, this));
 
     return div;
 };
 
-KindleScreen.prototype.pwdPanelMouseDownHandler = function(e) {
+KindleScreen.prototype.pwdPanelMouseClickHandler = function(e) {
     if (e.target.id === 'pwdPanelCloseBtn') {
         this.handleUserInteract(KindleScreen.ACTION_TYPE.PWD_CANCEL);
     } else if (true) {
@@ -192,19 +192,15 @@ KindleScreen.prototype.showPage = function(isTurnPage) {
 };
 
 KindleScreen.prototype.showNextPage = function() {
-    if (this.curPageIndex < this.pageData.length - 1) {
-        this.curPageIndex++;
-        this.swapIdleAndCurrentPage();
-        this.showPage(true);
-    }
+    this.curPageIndex++;
+    this.swapIdleAndCurrentPage();
+    this.showPage(true);
 };
 
 KindleScreen.prototype.showPrePage = function() {
-    if (this.curPageIndex > 0) {
-        this.curPageIndex--;
-        this.swapIdleAndCurrentPage();
-        this.showPage(true);
-    }
+    this.curPageIndex--;
+    this.swapIdleAndCurrentPage();
+    this.showPage(true);
 };
 
 KindleScreen.prototype.swapIdleAndCurrentPage = function() {
@@ -215,11 +211,9 @@ KindleScreen.prototype.swapIdleAndCurrentPage = function() {
 
 KindleScreen.prototype.handleUserInteract = function(type) {
     var curTime = new Date().getTime();
-    if (this.lastInteractTime && curTime - this.lastInteractTime < KindleScreen.MINIUM_INTERACT_INTERVAL && type != KindleScreen.ACTION_TYPE.PWD_CANCEL) {
+    if (this.currentStatus === KindleScreen.STATUS.VIEW_PAGES && this.lastInteractTime && curTime - this.lastInteractTime < KindleScreen.MINIUM_INTERACT_INTERVAL) {
 
     } else {
-        this.lastInteractTime = curTime;
-
         if (this.currentStatus === KindleScreen.STATUS.LOCKED) {
             this.showPasswordPanel();
         } else if (this.currentStatus === KindleScreen.STATUS.PASSWORD) {
@@ -228,6 +222,7 @@ KindleScreen.prototype.handleUserInteract = function(type) {
                     this.hidePasswordPanel();
                     this.hideScreenLock();
                     this.showPage();
+                    this.lastInteractTime = curTime;
                 } else {
 
                 }
@@ -235,10 +230,12 @@ KindleScreen.prototype.handleUserInteract = function(type) {
                 this.hidePasswordPanel();
             }
         } else if (this.currentStatus === KindleScreen.STATUS.VIEW_PAGES) {
-            if (type === KindleScreen.ACTION_TYPE.NEXT_PAGE) {
+            if (type === KindleScreen.ACTION_TYPE.NEXT_PAGE && this.curPageIndex < this.pageData.length - 1) {
                 this.showNextPage();
-            } else if (type === KindleScreen.ACTION_TYPE.PRE_PAGE) {
+                this.lastInteractTime = curTime;
+            } else if (type === KindleScreen.ACTION_TYPE.PRE_PAGE && this.curPageIndex > 0) {
                 this.showPrePage();
+                this.lastInteractTime = curTime;
             } else if (type === KindleScreen.ACTION_TYPE.LOCK) {
                 this.showScreenLock();
             }
@@ -303,7 +300,7 @@ Kindle.prototype.createButtonDiv = function(w, h) {
     div.style.borderRadius = Kindle.BUTTON_RADIUS + 'px';
     div.style.position = 'absolute';
     div.className = 'button';
-    div.addEventListener('mousedown', wrapFunction(this.mouseDownHandler, this));
+    div.addEventListener('click', wrapFunction(this.mouseClickHandler, this));
     return div;
 };
 
@@ -529,21 +526,21 @@ Kindle.prototype.initScreenDiv = function() {
     div.style.position = 'relative';
     div.style.width = Kindle.SCREEN_WIDTH - 2 + 'px';
     div.style.height = Kindle.SCREEN_HEIGHT - 2 + 'px';
-    div.addEventListener('mousedown', wrapFunction(this.mouseDownHandler, this));
+    div.addEventListener('click', wrapFunction(this.mouseClickHandler, this));
     document.body.appendChild(div);
 
     this.screen = new KindleScreen(this, div);
 };
 
-Kindle.prototype.mouseDownHandler = function(e) {
+Kindle.prototype.mouseClickHandler = function(e) {
     var target = e.target;
     if (target === this.leftDotDiv || target === this.rightDotDiv) {
         this.screen.handleUserInteract(KindleScreen.ACTION_TYPE.PRE_PAGE);
     } else if (target === this.leftLineDiv || target === this.rightLineDiv) {
         this.screen.handleUserInteract(KindleScreen.ACTION_TYPE.NEXT_PAGE);
     } else if (e.currentTarget === this.screen.rootDiv) {
-        var mouseDownX = e.clientX + document.body.scrollLeft;
-        if (mouseDownX > this.canvasPostionToGlobalPosition(this.screenX, 0).x + Kindle.SCREEN_WIDTH / 3) {
+        var mouseX = e.clientX + document.body.scrollLeft;
+        if (mouseX > this.canvasPostionToGlobalPosition(this.screenX, 0).x + Kindle.SCREEN_WIDTH / 3) {
             this.screen.handleUserInteract(KindleScreen.ACTION_TYPE.NEXT_PAGE);
         } else {
             this.screen.handleUserInteract(KindleScreen.ACTION_TYPE.PRE_PAGE);
