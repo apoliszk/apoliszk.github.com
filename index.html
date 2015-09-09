@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>apoliszk</title>
     <link rel="shortcut icon" type="image/ico" href="favicon.ico">
     <style>
@@ -10,7 +11,7 @@
             font-family: "Microsoft Yahei", "\5FAE\8F6F\96C5\9ED1", arial, sans-serif;
         }
 
-        body * {
+        * {
             margin: 0px;
             padding: 0px;
         }
@@ -24,12 +25,16 @@
         .button:active {
             background-color: rgba(144, 144, 144, .4);
         }
+
+        #kindleCanvas {
+            position: absolute;
+        }
     </style>
+    <script src="script.js"></script>
 </head>
 
 <body>
     <canvas id="kindleCanvas">Canvas not support</canvas>
-    <script src="script.js"></script>
 </body>
 
 </html>
