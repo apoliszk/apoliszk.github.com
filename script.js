@@ -319,8 +319,8 @@ Kindle.prototype.putToCenter = function() {
     var x = (w - this.CANVAS_WIDTH) / 2;
     var y = (h - this.CANVAS_HEIGHT) / 2;
 
-    if (x < 20) x = 20;
-    if (y < 20) y = 20;
+    if (x < 8) x = 8;
+    if (y < 8) y = 8;
 
     this.canvas.style.left = x + 'px';
     this.canvas.style.top = y + 'px';
