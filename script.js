@@ -296,11 +296,9 @@ Kindle.prototype.createButtonDiv = function(w, h) {
     var div = document.createElement('div');
     div.style.width = w + 'px';
     div.style.height = h + 'px';
-    div.style.display = 'none';
     div.style.borderRadius = Kindle.BUTTON_RADIUS + 'px';
     div.style.position = 'absolute';
     div.className = 'button';
-    div.addEventListener('click', wrapFunction(this.mouseClickHandler, this));
     return div;
 };
 
@@ -360,6 +358,9 @@ Kindle.prototype.doAction = function(action) {
             } else if (action.prop === 'visibility') {
                 action.element.style.visibility = 'hidden';
             }
+            break;
+        case 'execFunc':
+            action.func.apply(action.scope, action.params);
             break;
         default:
             break;
@@ -526,7 +527,6 @@ Kindle.prototype.initScreenDiv = function() {
     div.style.position = 'relative';
     div.style.width = Kindle.SCREEN_WIDTH - 2 + 'px';
     div.style.height = Kindle.SCREEN_HEIGHT - 2 + 'px';
-    div.addEventListener('click', wrapFunction(this.mouseClickHandler, this));
     document.body.appendChild(div);
 
     this.screen = new KindleScreen(this, div);
@@ -594,15 +594,19 @@ Kindle.prototype.putToCenter = function() {
     this.canvas.style.top = y + 'px';
 };
 
-Kindle.prototype.showButtons = function() {
-    var arr = [this.leftDotDiv, this.rightDotDiv, this.leftLineDiv, this.rightLineDiv];
-    for (var i = arr.length - 1; i >= 0; i--) {
-        this.addAction({
-            type: 'showDiv',
-            prop: 'display',
-            element: arr[i]
-        });
-    }
+Kindle.prototype.initListeners = function() {
+    var func = function() {
+        this.screen.rootDiv.addEventListener('click', wrapFunction(this.mouseClickHandler, this));
+        var arr = [this.leftDotDiv, this.rightDotDiv, this.leftLineDiv, this.rightLineDiv];
+        for (var i = arr.length - 1; i >= 0; i--) {
+            arr[i].addEventListener('click', wrapFunction(this.mouseClickHandler, this));
+        }
+    };
+    this.addAction({
+        type: 'execFunc',
+        func: func,
+        scope: this
+    });
 };
 // =================Class Kindle End=================
 
@@ -631,8 +635,8 @@ window.onload = function() {
         kindle.drawButtons();
         kindle.drawLogo();
         kindle.placeDivs();
-        kindle.showButtons();
         kindle.screen.showScreenLock();
+        kindle.initListeners();
     }
 };
 
