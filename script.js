@@ -27,7 +27,7 @@ function KindleScreen(kindle, rootDiv) {
     }];
     this.curPageDiv = this.pageTopDiv;
     this.idlePageDiv = this.pageBottomDiv;
-    this.loadCurPageAndNextPageInAdvance();
+    this.loadCurPage();
 }
 
 KindleScreen.SCREEN_LOCK_TIME = 15000;
@@ -46,9 +46,14 @@ KindleScreen.ACTION_TYPE = {
     LOCK: 'LOCK'
 };
 
-KindleScreen.prototype.loadCurPageAndNextPageInAdvance = function() {
+KindleScreen.prototype.loadCurPage = function() {
+    console.log('loadCurPage ' + this.pageData[this.curPageIndex].src);
     this.curPageDiv.children[0].src = this.pageData[this.curPageIndex].src;
+};
+
+KindleScreen.prototype.loadNextPageInAdvance = function() {
     if (this.curPageIndex < this.pageData.length - 1) {
+        console.log('loadNextPageInAdvance ' + this.pageData[this.curPageIndex + 1].src);
         this.idlePageDiv.children[0].src = this.pageData[this.curPageIndex + 1].src;
     }
 };
@@ -163,7 +168,7 @@ KindleScreen.prototype.createScreenPwdPanelDiv = function() {
         label: '9',
         id: 'btn9'
     }, {
-        label: '删除',
+        label: '◁',
         id: 'btnDel'
     }, {
         label: '0',
@@ -217,7 +222,10 @@ KindleScreen.prototype.clearPwdInput = function(e) {
 };
 
 KindleScreen.prototype.elementTrasitionEndHandler = function(e) {
-    this.transitionEnd = true;
+    e.target.transitionEnd = true;
+    if (e.target === this.curPageDiv) {
+        this.loadNextPageInAdvance();
+    }
 };
 
 KindleScreen.prototype.pwdPanelMouseClickHandler = function(e) {
@@ -247,7 +255,7 @@ KindleScreen.prototype.createScreenLockDiv = function() {
     div.style.opacity = 0;
     div.style.background = 'url(screen_lock.gif) center no-repeat';
     div.style.transition = 'opacity 1s ease-in-out';
-    div.addEventListener('transitionend', this.elementTrasitionEndHandler);
+    div.addEventListener('transitionend', wrapFunction(this.elementTrasitionEndHandler, this));
     return div;
 };
 
@@ -262,7 +270,7 @@ KindleScreen.prototype.createPageDiv = function() {
     div.style.opacity = 0;
     div.style.background = '#fff';
     div.style.transition = 'opacity 1s ease-in-out';
-    div.addEventListener('transitionend', this.elementTrasitionEndHandler);
+    div.addEventListener('transitionend', wrapFunction(this.elementTrasitionEndHandler, this));
 
     var iframe = document.createElement('iframe');
     iframe.width = '100%';
@@ -311,20 +319,18 @@ KindleScreen.prototype.hideScreenLock = function() {
     this.currentStatus = KindleScreen.STATUS.VIEW_PAGES;
 };
 
-KindleScreen.prototype.showPage = function(isTurnPage) {
-    this.loadCurPageAndNextPageInAdvance();
+KindleScreen.prototype.showPage = function() {
+    this.loadCurPage();
     this.kindle.addAction({
         type: 'showDiv',
         prop: 'opacity',
         element: this.curPageDiv
     });
-    if (isTurnPage) {
-        this.kindle.addAction({
-            type: 'hideDiv',
-            prop: 'opacity',
-            element: this.idlePageDiv
-        });
-    }
+    this.kindle.addAction({
+        type: 'hideDiv',
+        prop: 'opacity',
+        element: this.idlePageDiv
+    });
     this.currentStatus = KindleScreen.STATUS.VIEW_PAGES;
 };
 
@@ -332,7 +338,7 @@ KindleScreen.prototype.showNextPage = function() {
     if (this.curPageIndex < this.pageData.length - 1) {
         this.curPageIndex++;
         this.swapIdleAndCurrentPage();
-        this.showPage(true);
+        this.showPage();
     }
 };
 
@@ -340,7 +346,7 @@ KindleScreen.prototype.showPrePage = function() {
     if (this.curPageIndex > 0) {
         this.curPageIndex--;
         this.swapIdleAndCurrentPage();
-        this.showPage(true);
+        this.showPage();
     }
 };
 
@@ -361,7 +367,7 @@ KindleScreen.prototype.handleUserInteract = function(type) {
                  * 实际应该去后台校验密码是否正确，并且请求page1, 2, 3, 4...时应该做合法性检查
                  * 目前象征性的做一下检查，防人力不防程序员
                  */
-                if (this.pwdPanel.pwd == '9504') {
+                if (this.pwdPanel.pwd == '908330') {
                     this.hidePasswordPanel();
                     this.hideScreenLock();
                     this.showPage();
