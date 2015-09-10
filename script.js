@@ -54,6 +54,21 @@ KindleScreen.prototype.createDivForScreen = function() {
 };
 
 KindleScreen.prototype.createScreenPwdPanelDiv = function() {
+    var PANEL_WIDTH = Kindle.SCREEN_WIDTH * .8;
+    var PANEL_HEIGHT = Kindle.SCREEN_HEIGHT * .6;
+    var PANEL_BORDER_RADIUS = 8;
+    var PANEL_BACKGROUND = '#fff';
+    var FONT_SIZE = 24;
+    var MAIN_BORDER = '2px solid #000';
+    var SUB_BORDER = '1px solid #000';
+    var HEADER_HORIZONTAL_PADDING = 10;
+    var HEADER_HEIGHT = 8 * 2 + FONT_SIZE;
+    var CONTENT_PADDING = 15;
+    var BUTTON_GAP = 4;
+    var BUTTON_BORDER_RADIUS = 4;
+    var BUTTON_BORDER = '1px solid #000';
+    var BUTTON_BOTTOM_BORDER = '3px solid #000';
+
     var div = this.createDivForScreen();
     div.addEventListener('click', wrapFunction(this.pwdPanelMouseClickHandler, this));
     div.style.visibility = 'hidden';
@@ -61,13 +76,13 @@ KindleScreen.prototype.createScreenPwdPanelDiv = function() {
 
     var panel = document.createElement('div');
     panel.style.position = 'relative';
-    panel.style.width = '80%';
-    panel.style.height = '60%';
-    panel.style.border = '2px solid';
-    panel.style.borderRadius = '4px';
-    panel.style.background = '#fff';
-    panel.style.top = Kindle.SCREEN_HEIGHT / 5 + 'px';
-    panel.style.left = Kindle.SCREEN_WIDTH / 10 + 'px';
+    panel.style.width = PANEL_WIDTH + 'px';
+    panel.style.height = PANEL_HEIGHT + 'px';
+    panel.style.border = MAIN_BORDER;
+    panel.style.borderRadius = PANEL_BORDER_RADIUS + 'px';
+    panel.style.background = PANEL_BACKGROUND;
+    panel.style.left = (Kindle.SCREEN_WIDTH - PANEL_WIDTH) / 2 + 'px';
+    panel.style.top = (Kindle.SCREEN_HEIGHT - PANEL_HEIGHT) / 2 + 'px';
     div.appendChild(panel);
 
     var panelHeader = document.createElement('div');
@@ -82,12 +97,18 @@ KindleScreen.prototype.createScreenPwdPanelDiv = function() {
     panelHeader.appendChild(panelCloseBtn);
 
     var panelTitle = document.createElement('h2');
-    panelTitle.style.padding = '8px';
-    panelTitle.style.borderBottom = '2px solid';
+    panelTitle.style.paddingLeft = HEADER_HORIZONTAL_PADDING + 'px';
+    panelTitle.style.borderBottom = MAIN_BORDER;
     panelTitle.innerHTML = '输入密码';
     panelHeader.appendChild(panelTitle);
 
+    var panelScreen = document.createElement('div');
+    panelScreen.style.border = SUB_BORDER;
+    panelScreen.style.margin = '20px 20px';
+    panelScreen.style.height = '32px';
+
     panel.appendChild(panelHeader);
+    panel.appendChild(panelScreen);
 
     return div;
 };
