@@ -222,6 +222,11 @@ KindleScreen.prototype.handleUserInteract = function(type) {
             this.showPasswordPanel();
         } else if (this.currentStatus === KindleScreen.STATUS.PASSWORD) {
             if (type === KindleScreen.ACTION_TYPE.PWD_ENTER) {
+                /* TODO
+                 * Github个人主页只能放静态页面
+                 * 实际应该去后台校验密码是否正确，并且请求page1, 2, 3, 4...时应该做合法性检查
+                 * 目前象征性的做一下检查，防人力不防程序员
+                 */
                 if (true) {
                     this.hidePasswordPanel();
                     this.hideScreenLock();
