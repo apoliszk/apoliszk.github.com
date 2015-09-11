@@ -30,7 +30,7 @@ function KindleScreen(kindle, rootDiv) {
     this.loadCurPage();
 }
 
-KindleScreen.SCREEN_LOCK_TIME = 29000;
+KindleScreen.SCREEN_LOCK_TIME = 20000;
 
 KindleScreen.STATUS = {
     LOCKED: 'LOCKED',
