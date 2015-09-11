@@ -30,7 +30,7 @@ function KindleScreen(kindle, rootDiv) {
     this.loadCurPage();
 }
 
-KindleScreen.SCREEN_LOCK_TIME = 15000;
+KindleScreen.SCREEN_LOCK_TIME = 29000;
 
 KindleScreen.STATUS = {
     LOCKED: 'LOCKED',
@@ -268,7 +268,6 @@ KindleScreen.prototype.createPageMaskDiv = function() {
 KindleScreen.prototype.createPageDiv = function() {
     var div = this.createDivForScreen();
     div.style.opacity = 0;
-    div.style.background = '#fff';
     div.style.transition = 'opacity 1s ease-in-out';
     div.addEventListener('transitionend', wrapFunction(this.elementTrasitionEndHandler, this));
 
@@ -364,7 +363,7 @@ KindleScreen.prototype.handleUserInteract = function(type) {
             if (type === KindleScreen.ACTION_TYPE.PWD_ENTER) {
                 /* TODO
                  * Github个人主页只能放静态页面
-                 * 实际应该去后台校验密码是否正确，并且请求page1, 2, 3, 4...时应该做合法性检查
+                 * 实际应该去后台校验密码是否正确，并且iframe请求页面时应该做合法性检查
                  * 目前象征性的做一下检查，防人力不防程序员
                  */
                 if (this.pwdPanel.pwd == '908330') {
@@ -433,8 +432,8 @@ Kindle.KEY_LINE_WIDTH = 2;
 Kindle.KEY_LINE_HEIGHT = 162;
 Kindle.BUTTON_RADIUS = 15;
 Kindle.BUTTON_WIDTH = 30;
-Kindle.KEY_COLOR = '#999';
-Kindle.LOGO_COLOR = '#999';
+Kindle.KEY_COLOR = '#666';
+Kindle.LOGO_COLOR = '#666';
 
 Kindle.prototype.addAction = function(action) {
     if (this.actionArr.length === 0) {
