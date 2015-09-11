@@ -412,7 +412,18 @@ KindleScreen.prototype.skipHandleUserInteract = function() {
 // =================Class Kindle Begin=================
 function Kindle() {
     this.actionArr = [];
+
+    this.canvasBackgroundDiv = document.getElementById('canvasBackgroundDiv');
+    this.canvasBackgroundDiv.style.position = 'absolute';
+    this.canvasBackgroundDiv.style.borderRadius = Kindle.PAD_BACKGROUND_RADIUS + 'px';
+    this.canvasBackgroundDiv.style.background = '#000';
+    this.canvasBackgroundDiv.style.width = Kindle.PAD_WIDTH + 'px';
+    this.canvasBackgroundDiv.style.height = Kindle.PAD_HEIGHT + 'px';
+    this.canvasBackgroundDiv.style.opacity = 0;
+
+
     this.canvas = document.getElementById('kindleCanvas');
+    this.canvas.style.position = 'absolute';
     this.canvas.width = Kindle.CANVAS_WIDTH;
     this.canvas.height = Kindle.CANVAS_HEIGHT;
     this.ctx = this.canvas.getContext('2d');
@@ -425,6 +436,7 @@ Kindle.CANVAS_HEIGHT = 820;
 Kindle.PAD_WIDTH = 575;
 Kindle.PAD_HEIGHT = 810;
 Kindle.PAD_RADIUS = 40;
+Kindle.PAD_BACKGROUND_RADIUS = 30;
 Kindle.SCREEN_WIDTH = 460;
 Kindle.SCREEN_HEIGHT = 615;
 Kindle.KEY_DOT_RADIUS = 5;
@@ -755,7 +767,25 @@ Kindle.prototype.putToCenter = function() {
 
     this.canvas.style.left = x + 'px';
     this.canvas.style.top = y + 'px';
+
+    x = (w - Kindle.PAD_WIDTH) / 2;
+    y = (h - Kindle.PAD_HEIGHT) / 2;
+
+    if (x < 0) x = 0;
+    if (y < 0) y = 0;
+
+    this.canvasBackgroundDiv.style.left = x + 'px';
+    this.canvasBackgroundDiv.style.top = y + 'px';
 };
+
+Kindle.prototype.showCanvasBackground = function() {
+    this.canvasBackgroundDiv.style.transition = 'opacity 1s ease-in-out';
+    this.addAction({
+        type: 'showDiv',
+        prop: 'opacity',
+        element: this.canvasBackgroundDiv
+    });
+}
 // =================Class Kindle End=================
 
 // =================Global Function Begin=================
@@ -783,6 +813,7 @@ window.onload = function() {
         kindle.drawButtons();
         kindle.drawLogo();
         kindle.placeDivs();
+        kindle.showCanvasBackground();
         kindle.screen.showScreenLock();
     }
 };
