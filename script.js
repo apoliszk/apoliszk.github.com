@@ -421,7 +421,6 @@ function Kindle() {
     this.canvasBackgroundDiv.style.height = Kindle.PAD_HEIGHT + 'px';
     this.canvasBackgroundDiv.style.opacity = 0;
 
-
     this.canvas = document.getElementById('kindleCanvas');
     this.canvas.style.position = 'absolute';
     this.canvas.width = Kindle.CANVAS_WIDTH;
