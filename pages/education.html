@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: "Microsoft Yahei", "\5FAE\8F6F\96C5\9ED1", arial, sans-serif;
+            font-size: 20px;
+            background: #eee;
+            padding: 8px;
+        }
+
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        h1::before {
+            content: "◆";
+            padding-right: 8px;
+        }
+
+        ol {
+            margin-left: 50px;
+        }
+
+        ol > li {
+            margin-bottom: 20px;
+            float: left;
+            clear: both;
+        }
+
+        .time {
+            font-weight: bold;
+        }
+
+        .content::before {
+            content: "●";
+            float: left;
+            clear: left;
+            padding-right: 8px;
+        }
+
+        .content > span {
+            float: left;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>教育经历</h1>
+    <ol>
+        <li>
+            <div class="time">2005-09 至 2010-06</div>
+            <div class="content">
+                <span>
+                    北京大学物理学院
+                    <br> 物理学-本科
+                </span>
+            </div>
+            <div class="content">
+                <span>
+                    北京大学计算机科学技术系
+                    <br> 计算机软件-本科（双学位）
+                </span>
+            </div>
+        </li>
+        <li>
+            <div class="time">2002-09 至 2005-06</div>
+            <div class="content">新疆实验中学</div>
+        </li>
+    </ol>
+</body>
+
+</html>

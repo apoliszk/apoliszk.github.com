@@ -17,13 +17,15 @@ function KindleScreen(kindle, rootDiv) {
 
     this.curPageIndex = 0;
     this.pageData = [{
-        src: 'pages/page1.html'
+        src: 'pages/basic.html'
     }, {
-        src: 'pages/page2.html'
+        src: 'pages/education.html'
     }, {
-        src: 'pages/page3.html'
+        src: 'pages/skills.html'
     }, {
-        src: 'pages/page4.html'
+        src: 'pages/work in hillstone.html'
+    }, {
+        src: 'pages/work in zhongying.html'
     }];
     this.curPageDiv = this.pageTopDiv;
     this.idlePageDiv = this.pageBottomDiv;
@@ -38,7 +40,7 @@ KindleScreen.ACTION_TYPE = {
     LOCK: 'LOCK'
 };
 
-KindleScreen.SCREEN_LOCK_TIME = 40000;
+KindleScreen.SCREEN_LOCK_TIME = 90000;
 
 KindleScreen.STATUS = {
     LOCKED: 'LOCKED',
