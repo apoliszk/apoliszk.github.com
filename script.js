@@ -257,7 +257,7 @@ KindleScreen.prototype.handleUserInteract = function(type) {
                  * 实际应该去后台校验密码是否正确，并且iframe请求页面时应该做合法性检查
                  * 目前象征性的做一下检查，防人力不防程序员
                  */
-                if (this.pwdPanel.pwd == '908330') {
+                if (this.pwdPanel.pwd == '0908') {
                     this.hidePasswordPanel();
                     this.hideScreenLock();
                     this.showPage();
