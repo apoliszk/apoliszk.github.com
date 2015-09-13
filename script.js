@@ -321,7 +321,7 @@ KindleScreen.prototype.loadNextPageInAdvance = function() {
 };
 
 KindleScreen.prototype.iframeLoadComplete = function(e) {
-    console.log('iframeLoadComplete');
+    console.log('iframeLoadComplete ' + e.target.src);
     e.target.loading = false;
 };
 
