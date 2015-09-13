@@ -26,6 +26,8 @@ function KindleScreen(kindle, rootDiv) {
         src: 'pages/work in hillstone.html'
     }, {
         src: 'pages/work in zhongying.html'
+    }, {
+        src: 'pages/thanks.html'
     }];
     this.curPageDiv = this.pageTopDiv;
     this.idlePageDiv = this.pageBottomDiv;
