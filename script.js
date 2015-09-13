@@ -71,12 +71,13 @@ KindleScreen.prototype.createPageDiv = function() {
     div.style.transition = 'opacity 1s ease-in-out';
     div.addEventListener('transitionend', wrapFunction(this.elementTrasitionEndHandler, this));
 
-    var iframe = document.createElement('iframe');
-    iframe.width = '100%';
-    iframe.height = '100%';
-    iframe.frameBorder = '0';
-    iframe.scrolling = 'no';
-    div.appendChild(iframe);
+    div.iframe = document.createElement('iframe');
+    div.iframe.width = '100%';
+    div.iframe.height = '100%';
+    div.iframe.frameBorder = '0';
+    div.iframe.scrolling = 'no';
+    div.iframe.onload = wrapFunction(this.iframeLoadComplete, this);
+    div.appendChild(div.iframe);
 
     return div;
 };
@@ -307,14 +308,21 @@ KindleScreen.prototype.hideScreenLock = function() {
 
 KindleScreen.prototype.loadCurPage = function() {
     console.log('loadCurPage ' + this.pageData[this.curPageIndex].src);
-    this.curPageDiv.children[0].src = this.pageData[this.curPageIndex].src;
+    this.curPageDiv.iframe.loading = true;
+    this.curPageDiv.iframe.src = this.pageData[this.curPageIndex].src;
 };
 
 KindleScreen.prototype.loadNextPageInAdvance = function() {
     if (this.curPageIndex < this.pageData.length - 1) {
         console.log('loadNextPageInAdvance ' + this.pageData[this.curPageIndex + 1].src);
-        this.idlePageDiv.children[0].src = this.pageData[this.curPageIndex + 1].src;
+        this.idlePageDiv.iframe.loading = true;
+        this.idlePageDiv.iframe.src = this.pageData[this.curPageIndex + 1].src;
     }
+};
+
+KindleScreen.prototype.iframeLoadComplete = function(e) {
+    console.log('iframeLoadComplete');
+    e.target.loading = false;
 };
 
 KindleScreen.prototype.pwdPanelMouseClickHandler = function(e) {
@@ -401,6 +409,10 @@ KindleScreen.prototype.skipHandleUserInteract = function() {
     }
     if (this.screenLockDiv.transitionEnd === false || this.pageTopDiv.transitionEnd === false || this.pageBottomDiv.transition === false) {
         console.log('has transition, skip handle user interaction');
+        return true;
+    }
+    if (this.curPageDiv.iframe.loading === true) {
+        console.log('iframe is loading, skip handle user interaction');
         return true;
     }
     return false;
