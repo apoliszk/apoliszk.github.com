@@ -6,13 +6,13 @@ function KindleScreen(kindle, rootDiv) {
     this.pwdPanelDiv = this.createScreenPwdPanelDiv();
     this.screenLockDiv = this.createScreenLockDiv();
     this.pageMaskDiv = this.createPageMaskDiv();
-    this.pageTopDiv = this.createPageDiv();
-    this.pageMiddleDiv = this.createPageDiv();
-    this.pageBottomDiv = this.createPageDiv();
+    this.prePageDiv = this.createPageDiv();
+    this.curPageDiv = this.createPageDiv();
+    this.nextPageDiv = this.createPageDiv();
 
-    rootDiv.appendChild(this.pageBottomDiv);
-    rootDiv.appendChild(this.pageMiddleDiv);
-    rootDiv.appendChild(this.pageTopDiv);
+    rootDiv.appendChild(this.prePageDiv);
+    rootDiv.appendChild(this.curPageDiv);
+    rootDiv.appendChild(this.nextPageDiv);
     rootDiv.appendChild(this.pageMaskDiv);
     rootDiv.appendChild(this.screenLockDiv);
     rootDiv.appendChild(this.pwdPanelDiv);
@@ -31,9 +31,6 @@ function KindleScreen(kindle, rootDiv) {
     }, {
         src: 'pages/thanks.html'
     }];
-    this.prePageDiv = this.pageTopDiv;
-    this.curPageDiv = this.pageMiddleDiv;
-    this.nextPageDiv = this.pageBottomDiv;
     this.loadCurPage();
     this.loadNextPageInAdvance();
 }
@@ -446,7 +443,7 @@ KindleScreen.prototype.skipHandleUserInteract = function() {
         console.log('has action, skip handle user interaction');
         return true;
     }
-    if (this.screenLockDiv.transitionEnd === false || this.pageTopDiv.transitionEnd === false || this.pageMiddleDiv.transitionEnd === false || this.pageBottomDiv.transition === false) {
+    if (this.screenLockDiv.transitionEnd === false || this.curPageDiv.transitionEnd === false || this.prePageDiv.transitionEnd === false || this.nextPageDiv.transition === false) {
         console.log('has transition, skip handle user interaction');
         return true;
     }
