@@ -447,7 +447,7 @@ KindleScreen.prototype.skipHandleUserInteract = function() {
         console.log('has transition, skip handle user interaction');
         return true;
     }
-    if (this.curPageDiv.iframe.loading === true) {
+    if (this.curPageDiv.iframe.loading === true || this.prePageDiv.iframe.loading === true || this.nextPageDiv.iframe.loading === true) {
         console.log('iframe is loading, skip handle user interaction');
         return true;
     }
