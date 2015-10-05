@@ -7,9 +7,11 @@ function KindleScreen(kindle, rootDiv) {
     this.screenLockDiv = this.createScreenLockDiv();
     this.pageMaskDiv = this.createPageMaskDiv();
     this.pageTopDiv = this.createPageDiv();
+    this.pageMiddleDiv = this.createPageDiv();
     this.pageBottomDiv = this.createPageDiv();
 
     rootDiv.appendChild(this.pageBottomDiv);
+    rootDiv.appendChild(this.pageMiddleDiv);
     rootDiv.appendChild(this.pageTopDiv);
     rootDiv.appendChild(this.pageMaskDiv);
     rootDiv.appendChild(this.screenLockDiv);
@@ -17,21 +19,29 @@ function KindleScreen(kindle, rootDiv) {
 
     this.curPageIndex = 0;
     this.pageData = [{
-        src: 'pages/basic.html'
+        src: 'pages/basic.html',
+        index: 0
     }, {
-        src: 'pages/education.html'
+        src: 'pages/education.html',
+        index: 1
     }, {
-        src: 'pages/skills.html'
+        src: 'pages/skills.html',
+        index: 2
     }, {
-        src: 'pages/work in hillstone.html'
+        src: 'pages/work in hillstone.html',
+        index: 3
     }, {
-        src: 'pages/work in zhongying.html'
+        src: 'pages/work in zhongying.html',
+        index: 4
     }, {
-        src: 'pages/thanks.html'
+        src: 'pages/thanks.html',
+        index: 5
     }];
-    this.curPageDiv = this.pageTopDiv;
-    this.idlePageDiv = this.pageBottomDiv;
+    this.prePageDiv = this.pageTopDiv;
+    this.curPageDiv = this.pageMiddleDiv;
+    this.nextPageDiv = this.pageBottomDiv;
     this.loadCurPage();
+    this.loadNextPageInAdvance();
 }
 
 KindleScreen.ACTION_TYPE = {
@@ -42,7 +52,7 @@ KindleScreen.ACTION_TYPE = {
     LOCK: 'LOCK'
 };
 
-KindleScreen.SCREEN_LOCK_TIME = 90000;
+KindleScreen.SCREEN_LOCK_TIME = 49000;
 
 KindleScreen.STATUS = {
     LOCKED: 'LOCKED',
@@ -244,6 +254,7 @@ KindleScreen.prototype.elementTrasitionEndHandler = function(e) {
     e.target.transitionEnd = true;
     if (e.target === this.curPageDiv) {
         this.loadNextPageInAdvance();
+        this.loadPrePageInAdvance();
     }
 };
 
@@ -307,22 +318,43 @@ KindleScreen.prototype.hideScreenLock = function() {
 };
 
 KindleScreen.prototype.loadCurPage = function() {
-    console.log('loadCurPage ' + this.pageData[this.curPageIndex].src);
-    this.curPageDiv.iframe.loading = true;
-    this.curPageDiv.iframe.src = this.pageData[this.curPageIndex].src;
+    if (this.curPageDiv.index !== this.curPageIndex) {
+        console.log('loadCurPage ' + this.pageData[this.curPageIndex].src);
+        this.curPageDiv.index = this.curPageIndex;
+        this.loadIframePage(this.curPageDiv);
+    }
 };
 
 KindleScreen.prototype.loadNextPageInAdvance = function() {
     if (this.curPageIndex < this.pageData.length - 1) {
-        console.log('loadNextPageInAdvance ' + this.pageData[this.curPageIndex + 1].src);
-        this.idlePageDiv.iframe.loading = true;
-        this.idlePageDiv.iframe.src = this.pageData[this.curPageIndex + 1].src;
+        if (this.nextPageDiv.index !== this.curPageIndex + 1) {
+            console.log('loadNextPageInAdvance ' + this.pageData[this.curPageIndex + 1].src);
+            this.nextPageDiv.index = this.curPageIndex + 1;
+            this.loadIframePage(this.nextPageDiv);
+        }
     }
 };
 
+KindleScreen.prototype.loadPrePageInAdvance = function() {
+    if (this.curPageIndex > 0) {
+        if (this.prePageDiv.index !== this.curPageIndex - 1) {
+            console.log('loadPrePageInAdvance ' + this.pageData[this.curPageIndex - 1].src);
+            this.prePageDiv.index = this.curPageIndex - 1;
+            this.loadIframePage(this.prePageDiv);
+        }
+    }
+};
+
+KindleScreen.prototype.loadIframePage = function(frameDiv) {
+    frameDiv.iframe.loading = true;
+    frameDiv.iframe.src = this.pageData[frameDiv.index].src;
+};
+
 KindleScreen.prototype.iframeLoadComplete = function(e) {
-    console.log('iframeLoadComplete ' + e.target.src);
-    e.target.loading = false;
+    if (e.target.src) {
+        console.log('iframeLoadComplete ' + e.target.src);
+        e.target.loading = false;
+    }
 };
 
 KindleScreen.prototype.pwdPanelMouseClickHandler = function(e) {
@@ -355,7 +387,10 @@ KindleScreen.prototype.resetPwdPanel = function(e) {
 KindleScreen.prototype.showNextPage = function() {
     if (this.curPageIndex < this.pageData.length - 1) {
         this.curPageIndex++;
-        this.swapIdleAndCurrentPage();
+        var temp = this.curPageDiv;
+        this.curPageDiv = this.nextPageDiv;
+        this.nextPageDiv = this.prePageDiv;
+        this.prePageDiv = temp;
         this.showPage();
     }
 };
@@ -363,7 +398,10 @@ KindleScreen.prototype.showNextPage = function() {
 KindleScreen.prototype.showPrePage = function() {
     if (this.curPageIndex > 0) {
         this.curPageIndex--;
-        this.swapIdleAndCurrentPage();
+        var temp = this.curPageDiv;
+        this.curPageDiv = this.prePageDiv;
+        this.prePageDiv = this.nextPageDiv;
+        this.nextPageDiv = temp;
         this.showPage();
     }
 };
@@ -378,7 +416,12 @@ KindleScreen.prototype.showPage = function() {
     this.kindle.addAction({
         type: 'hideDiv',
         prop: 'opacity',
-        element: this.idlePageDiv
+        element: this.prePageDiv
+    });
+    this.kindle.addAction({
+        type: 'hideDiv',
+        prop: 'opacity',
+        element: this.nextPageDiv
     });
     this.currentStatus = KindleScreen.STATUS.VIEW_PAGES;
 };
@@ -407,7 +450,7 @@ KindleScreen.prototype.skipHandleUserInteract = function() {
         console.log('has action, skip handle user interaction');
         return true;
     }
-    if (this.screenLockDiv.transitionEnd === false || this.pageTopDiv.transitionEnd === false || this.pageBottomDiv.transition === false) {
+    if (this.screenLockDiv.transitionEnd === false || this.pageTopDiv.transitionEnd === false || this.pageMiddleDiv.transitionEnd === false || this.pageBottomDiv.transition === false) {
         console.log('has transition, skip handle user interaction');
         return true;
     }
@@ -416,12 +459,6 @@ KindleScreen.prototype.skipHandleUserInteract = function() {
         return true;
     }
     return false;
-};
-
-KindleScreen.prototype.swapIdleAndCurrentPage = function() {
-    var temp = this.curPageDiv;
-    this.curPageDiv = this.idlePageDiv;
-    this.idlePageDiv = temp;
 };
 // =================Class KindleScreen End=================
 
