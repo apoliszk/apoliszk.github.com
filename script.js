@@ -19,23 +19,17 @@ function KindleScreen(kindle, rootDiv) {
 
     this.curPageIndex = 0;
     this.pageData = [{
-        src: 'pages/basic.html',
-        index: 0
+        src: 'pages/basic.html'
     }, {
-        src: 'pages/education.html',
-        index: 1
+        src: 'pages/education.html'
     }, {
-        src: 'pages/skills.html',
-        index: 2
+        src: 'pages/skills.html'
     }, {
-        src: 'pages/work in hillstone.html',
-        index: 3
+        src: 'pages/work in hillstone.html'
     }, {
-        src: 'pages/work in zhongying.html',
-        index: 4
+        src: 'pages/work in zhongying.html'
     }, {
-        src: 'pages/thanks.html',
-        index: 5
+        src: 'pages/thanks.html'
     }];
     this.prePageDiv = this.pageTopDiv;
     this.curPageDiv = this.pageMiddleDiv;
@@ -320,8 +314,7 @@ KindleScreen.prototype.hideScreenLock = function() {
 KindleScreen.prototype.loadCurPage = function() {
     if (this.curPageDiv.index !== this.curPageIndex) {
         console.log('loadCurPage ' + this.pageData[this.curPageIndex].src);
-        this.curPageDiv.index = this.curPageIndex;
-        this.loadIframePage(this.curPageDiv);
+        this.loadIframePage(this.curPageDiv, this.curPageIndex);
     }
 };
 
@@ -329,8 +322,7 @@ KindleScreen.prototype.loadNextPageInAdvance = function() {
     if (this.curPageIndex < this.pageData.length - 1) {
         if (this.nextPageDiv.index !== this.curPageIndex + 1) {
             console.log('loadNextPageInAdvance ' + this.pageData[this.curPageIndex + 1].src);
-            this.nextPageDiv.index = this.curPageIndex + 1;
-            this.loadIframePage(this.nextPageDiv);
+            this.loadIframePage(this.nextPageDiv, this.curPageIndex + 1);
         }
     }
 };
@@ -339,15 +331,19 @@ KindleScreen.prototype.loadPrePageInAdvance = function() {
     if (this.curPageIndex > 0) {
         if (this.prePageDiv.index !== this.curPageIndex - 1) {
             console.log('loadPrePageInAdvance ' + this.pageData[this.curPageIndex - 1].src);
-            this.prePageDiv.index = this.curPageIndex - 1;
-            this.loadIframePage(this.prePageDiv);
+            this.loadIframePage(this.prePageDiv, this.curPageIndex - 1);
         }
     }
 };
 
-KindleScreen.prototype.loadIframePage = function(frameDiv) {
-    frameDiv.iframe.loading = true;
-    frameDiv.iframe.src = this.pageData[frameDiv.index].src;
+KindleScreen.prototype.loadIframePage = function(frameDiv, index) {
+    frameDiv.index = index;
+    // remove iframe后再设置src，这样不会产生history。否则浏览器点击后退按钮，程序会出bug
+    var iframe = frameDiv.iframe;
+    frameDiv.removeChild(iframe);
+    iframe.loading = true;
+    iframe.src = this.pageData[index].src;
+    frameDiv.appendChild(iframe);
 };
 
 KindleScreen.prototype.iframeLoadComplete = function(e) {
