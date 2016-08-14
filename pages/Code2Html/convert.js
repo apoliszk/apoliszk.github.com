@@ -7,10 +7,20 @@ function convert(inputStr) {
 }
 
 function convertLine(line) {
+    line = converSpecial(line);
     line = convertIndent(line);
-    line = converLtGt(line);
     line = highlight(line);
 
+    return line;
+}
+
+var ampReg = /\&/g;
+var ltReg = /</g;
+var gtReg = />/g;
+function converSpecial(line) {
+    line = line.replace(ampReg, '&amp;');
+    line = line.replace(ltReg, '&lt;');
+    line = line.replace(gtReg, '&gt;');
     return line;
 }
 
@@ -26,14 +36,6 @@ function convertIndent(line) {
         }
         return result;
     });
-    return line;
-}
-
-var ltReg = /</g;
-var gtReg = />/g;
-function converLtGt(line) {
-    line = line.replace(ltReg, '&lt;');
-    line = line.replace(gtReg, '&gt;');
     return line;
 }
 
