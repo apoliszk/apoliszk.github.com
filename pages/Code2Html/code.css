@@ -10,14 +10,14 @@
     font-family: consolas, monospace;
 }
 
-.code-keyword {
+codekeyword {
     color: #c678dd;
 }
 
-.code-fn-name {
+codefnname {
     color: #4bb6c2;
 }
 
-.code-string, .code-string * {
+codestring, codestring * {
     color: #7cc379;
 }
