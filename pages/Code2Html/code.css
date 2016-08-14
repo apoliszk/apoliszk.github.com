@@ -7,7 +7,7 @@
     min-height: 200px;
     color: white;
     background: #282c34;
-    font-family: consolas;
+    font-family: consolas monospace;
 }
 
 .code-keyword {
