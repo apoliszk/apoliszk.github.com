@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>代码转HTML工具</title>
+    <link rel="stylesheet" href="code.css" charset="utf-8">
+    <style media="screen">
+        textarea {
+            width: 100%;
+            height: 200px;
+        }
+
+        h4 .nav {
+            text-decoration: none;
+            padding: 4px 8px;
+            margin-right: 20px;
+            color: gray;
+        }
+
+        h4 .nav.active {
+            text-decoration: underline;
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>代码转HTML工具</h1>
+    <section>
+        <h4>从IDE中粘贴代码到下面文本框</h4>
+        <textarea name="codeInput"></textarea>
+    </section>
+    <section>
+        <h4>
+            <a href="javascript:void(0)" class="nav">预览</a>
+            <a href="javascript:void(0)" class="nav">HTML</a>
+        </h4>
+        <code class="code"></code>
+        <textarea name="outputCode" readOnly="true"></textarea>
+    </section>
+    <script type="text/javascript" src="convert.js"></script>
+    <script type="text/javascript">
+        var inputTextArea = document.querySelector('textarea[name=codeInput]');
+        var outputTextArea = document.querySelector('textarea[name=outputCode]');
+        var outputPreview = document.querySelector('code');
+        var navs = document.querySelectorAll('h4>a');
+
+        for (var i = 0, len = navs.length; i < len; i++) {
+            navs[i].addEventListener('click', navClickHandler);
+        }
+
+        function navClickHandler(e) {
+            for (var i = 0, len = navs.length; i < len; i++) {
+                if (navs[i] == e.target) {
+                    navs[i].classList.add('active');
+                    if (navs[i].innerHTML == '预览') {
+                        outputPreview.style.display = 'block';
+                        outputTextArea.style.display = 'none';
+                    } else {
+                        outputPreview.style.display = 'none';
+                        outputTextArea.style.display = 'inline-block';
+                    }
+                } else {
+                    navs[i].classList.remove('active');
+                }
+            }
+        }
+
+        navClickHandler({
+            target: navs[0]
+        });
+
+        inputTextArea.addEventListener('input', function() {
+            var html = convert(inputTextArea.value);
+            outputPreview.innerHTML = html;
+            outputTextArea.value = html;
+        });
+    </script>
+</body>
+
+</html>
