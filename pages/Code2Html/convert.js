@@ -41,7 +41,7 @@ function convertIndent(line) {
 
 var stringReg = /((?:\'[^\']*\')|(?:\"[^\"]*\"))/g;
 var fnNameReg = /\b(\w+)\b([ ]*\()/g;
-var keywordReg = /\b((?:new)|(?:for)|(?:while)|(?:do)|(?:if)|(?:else)|(?:return)|(?:break)|(?:try)|(?:catch)|(?:finally)|(?:var)|(?:function)|(?:switch)|(?:case)|(?:default)|(?:public)|(?:private)|(?:protected)|(?:void)|(?:static)|(?:final)|(?:const)|(?:interface)|(?:class)|(?:implements)|(?:extends))\b/g;
+var keywordReg = /\b((?:new)|(?:for)|(?:while)|(?:do)|(?:if)|(?:else)|(?:return)|(?:break)|(?:try)|(?:catch)|(?:finally)|(?:var)|(?:function)|(?:switch)|(?:case)|(?:default)|(?:public)|(?:private)|(?:protected)|(?:void)|(?:static)|(?:final)|(?:const)|(?:package)|(?:interface)|(?:implements)|(?:extends))\b/g;
 function highlight(line) {
     line = line.replace(stringReg, '<span class="code-string">$1</span>');
     line = line.replace(fnNameReg, '<span class="code-fn-name">$1</span>$2');
