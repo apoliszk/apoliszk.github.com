@@ -1,0 +1,106 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+body {
+    margin: 10px;
+    min-width: 500px;
+}
+body, input[text], input[type="button"] {
+    color: #888;
+    font-family: Cambria, Georgia;
+}
+my-info {
+    position: relative;
+}
+.help {
+    color: inherit;
+    margin: 0 10px;
+    border-radius: 50%;
+    padding: 0 6px;
+    background: #EEE;
+    text-decoration: none;
+    font-size: 50%;
+    vertical-align: super;
+}
+.help.on {
+    color: white;
+    background: #607D8B;
+}
+.background-info {
+    padding: 8px;
+    width: 350px;
+    background: #DDD;
+    position: absolute;
+    line-height: 1.5;
+    box-shadow: 4px 4px 4px #888;
+    top: 40px;
+    left: 40px;
+    z-index: 10;
+}
+.background-info-pointer {
+    position: absolute;
+    top: -15px;
+    left: 210px;
+    border-left: 20px solid transparent;
+    border-top: 0px solid transparent;
+    border-right: 0px solid transparent;
+    border-bottom: 60px solid #DDD;
+    box-shadow: 4px 4px 4px #888;
+    transform: rotate(15deg);
+}
+input[text] {
+    border: 0px;
+    border-bottom: 2px solid #EEE;
+    padding: 5px 4px 0px;
+    width: 50px;
+    text-align: center;
+    outline: none;
+    font-size: 120%;
+}
+input[type="button"] {
+    padding: 5px 10px;
+    background-color: #EEE;
+    outline: none;
+    color: #607D8B;
+    margin-right: 10px;
+    border: 0;
+    cursor: pointer;
+}
+input[type="button"]:hover {
+    color: #039be5;
+    background-color: #CFD8DC;
+}
+input[type="button"]:active {
+    color: white;
+    background-color: #607D8B;
+}
+.control-bar {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 5px;
+    margin-left: 5px;
+    align-items: center;
+}
+.control-bar-item {
+    margin-right: 40px;
+}
+.control-bar-item-error-info {
+    color: #FF3333;
+}
+.number-table {
+    display: flex;
+    flex-wrap: wrap;
+}
+.number-table>.number-table-el {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    background: #EEE;
+    border: 1px solid white;
+}
+.number-table-el.skip {
+    color: white;
+    background: #607D8B;
+}

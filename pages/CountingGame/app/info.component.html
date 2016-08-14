@@ -1,0 +1,14 @@
+<h1>Counting Game<a class="help" [class.on]="infoShown" href="#" (click)="toggleInfo()">?</a></h1>
+<p class="background-info" *ngIf="infoShown">
+    This is a cheat tool for counting game. <br>
+    <b>Counting Game Rules:</b>
+    <br>
+    People sit arround a table and start counting numbers one by one.
+    <br>
+    If they choose number "7", <br>
+    when comes to a number mod "7" equals "0" or has a "7", <br>
+    the person should knock the table instead of saying the number.
+</p>
+<div class="background-info-pointer" *ngIf="infoShown">
+
+</div>

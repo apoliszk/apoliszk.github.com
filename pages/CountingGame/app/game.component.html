@@ -1,0 +1,17 @@
+<div class="control-bar">
+    <div class="control-bar-item">
+        <label>Number:</label>
+        <input text="" #numberInput value="{{number}}" (keyup)="onNumberChange(numberInput.value)">
+    </div>
+    <div class="control-bar-item">
+        <label>Total:</label>
+        <input text="" #totalInput value="{{tableElementsCount}}" (keyup)="onTotalChange(totalInput.value)">
+    </div>
+    <input type="button" name="name" value="Apply" (click)="generateTable()">
+    <div class="control-bar-item-error-info" *ngIf="inputNumberError||inputTotalError">You should input a positive number!</div>
+</div>
+<div class="number-table">
+    <div *ngFor="let el of tableElements" class="number-table-el" [class.skip]="el.skip">
+        {{el.number}}
+    </div>
+</div>
