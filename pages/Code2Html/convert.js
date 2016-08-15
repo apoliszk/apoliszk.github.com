@@ -25,6 +25,7 @@ function converSpecial(line) {
 }
 
 var whiteSpaceReg = /^\s+\S/;
+var tabReg = /\t/g;
 function convertIndent(line) {
     line = line.replace(whiteSpaceReg, function(matchStr, index, wholeStr) {
         var result = '';
@@ -36,6 +37,7 @@ function convertIndent(line) {
         }
         return result;
     });
+    line = line.replace(tabReg, '&nbsp;&nbsp;&nbsp;&nbsp;');
     return line;
 }
 
