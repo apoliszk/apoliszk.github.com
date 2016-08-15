@@ -4,7 +4,6 @@
 <head>
     <meta charset="utf-8">
     <title>代码转HTML工具</title>
-    <link rel="stylesheet" href="code.css" charset="utf-8">
     <meta name="viewport" content="width=500, user-scalable=no">
     <style media="screen">
         textarea {
@@ -24,6 +23,32 @@
             color: black;
         }
     </style>
+    <style media="screen">
+        code {
+            border-radius: 2px;
+            padding: 16px 20px;
+            margin: 8px 0px;
+            line-height: 1.5;
+            display: block;
+            min-height: 200px;
+            color: #abb2bf;
+            background: #282c34;
+            font-family: consolas, monospace;
+        }
+
+        codekeyword {
+            color: #c678dd;
+        }
+
+        codefnname {
+            color: #4bb6c2;
+        }
+
+        codestring,
+        codestring * {
+            color: #7cc379;
+        }
+    </style>
 </head>
 
 <body>
@@ -36,15 +61,29 @@
         <h4>
             <a href="javascript:void(0)" class="nav">预览</a>
             <a href="javascript:void(0)" class="nav">HTML</a>
+            <a href="javascript:void(0)" class="nav">CSS</a>
         </h4>
-        <code class="code"></code>
+        <div name="codePreview">
+            <code></code>
+        </div>
         <textarea name="outputCode" readOnly="true"></textarea>
+        <textarea name="outputCss" readOnly="true"></textarea>
     </section>
     <script type="text/javascript" src="convert.js"></script>
     <script type="text/javascript">
         var inputTextArea = document.querySelector('textarea[name=codeInput]');
-        var outputTextArea = document.querySelector('textarea[name=outputCode]');
-        var outputPreview = document.querySelector('code');
+        var outputPreview = document.querySelector('div[name=codePreview]');
+        var outputHtmlTextArea = document.querySelector('textarea[name=outputCode]');
+        var outputCssTextArea = document.querySelector('textarea[name=outputCss]');
+
+        var codeCss = document.styleSheets[1];
+        var cssRules = codeCss.rules || codeCss.cssRules;
+        var cssString = '';
+        for (var i = 0, len = cssRules.length; i < len; i++) {
+            cssString += cssRules[i].cssText + '\n';
+        }
+        outputCssTextArea.value = cssString;
+
         var navs = document.querySelectorAll('h4>a');
 
         for (var i = 0, len = navs.length; i < len; i++) {
@@ -57,10 +96,16 @@
                     navs[i].classList.add('active');
                     if (navs[i].innerHTML == '预览') {
                         outputPreview.style.display = 'block';
-                        outputTextArea.style.display = 'none';
+                        outputHtmlTextArea.style.display = 'none';
+                        outputCssTextArea.style.display = 'none';
+                    } else if (navs[i].innerHTML == 'HTML') {
+                        outputPreview.style.display = 'none';
+                        outputHtmlTextArea.style.display = 'inline-block';
+                        outputCssTextArea.style.display = 'none';
                     } else {
                         outputPreview.style.display = 'none';
-                        outputTextArea.style.display = 'inline-block';
+                        outputHtmlTextArea.style.display = 'none';
+                        outputCssTextArea.style.display = 'inline-block';
                     }
                 } else {
                     navs[i].classList.remove('active');
@@ -75,7 +120,7 @@
         inputTextArea.addEventListener('input', function() {
             var html = convert(inputTextArea.value);
             outputPreview.innerHTML = html;
-            outputTextArea.value = html;
+            outputHtmlTextArea.value = html;
         });
     </script>
 </body>

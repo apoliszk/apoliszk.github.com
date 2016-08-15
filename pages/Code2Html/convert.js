@@ -3,7 +3,7 @@ function convert(inputStr) {
     for (var i = 0, len = lines.length; i < len; i++) {
         lines[i] = convertLine(lines[i]);
     }
-    return lines.join('\n<br>');
+    return '<code>\n' + lines.join('\n<br>') + '\n</code>';
 }
 
 function convertLine(line) {
