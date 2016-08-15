@@ -25,19 +25,21 @@ function converSpecial(line) {
 }
 
 var whiteSpaceReg = /^\s+\S/;
-var tabReg = /\t/g;
 function convertIndent(line) {
     line = line.replace(whiteSpaceReg, function(matchStr, index, wholeStr) {
         var result = '';
+        var charCode;
         for (var j = 0; j < matchStr.length; j++) {
-            if (matchStr.charCodeAt(j) == 32)
+            charCode = matchStr.charCodeAt(j);
+            if (charCode == 32)
                 result += '&nbsp;';
+            else if (charCode == 9)
+                result += '&nbsp;&nbsp;&nbsp;&nbsp;';
             else
                 result += matchStr.charAt(j)
         }
         return result;
     });
-    line = line.replace(tabReg, '&nbsp;&nbsp;&nbsp;&nbsp;');
     return line;
 }
 
