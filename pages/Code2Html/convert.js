@@ -58,7 +58,7 @@ function highlight(line) {
     line = line.replace(keywordOopReg, '<codekeyword>$1</codekeyword>');
     line = line.replace(keywordOtherReg, '<codekeyword>$1</codekeyword>');
 
-    line = line.replace(annotationReg, '<codeannotation>$1</codeannotation>')
+    line = line.replace(annotationReg, '<codeannotation>$1</codeannotation>');
 
     return line;
 }
