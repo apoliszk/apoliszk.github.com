@@ -17,6 +17,7 @@ function convertLine(line) {
 var ampReg = /\&/g;
 var ltReg = /</g;
 var gtReg = />/g;
+
 function converSpecial(line) {
     line = line.replace(ampReg, '&amp;');
     line = line.replace(ltReg, '&lt;');
@@ -46,8 +47,8 @@ function convertIndent(line) {
 var stringReg = /((?:\'[^\']*\')|(?:\"[^\"]*\"))/g;
 var fnNameReg = /\b(\w+)\b([ ]*\()/g;
 var keywordControlReg = /\b((?:for)|(?:while)|(?:do)|(?:if)|(?:else)|(?:return)|(?:break)|(?:try)|(?:catch)|(?:finally)|(?:switch)|(?:case)|(?:default))\b/g;
-var keywordOopReg = /\b((?:public)|(?:private)|(?:protected)|(?:package)|(?:interface)|(?:class)|(?:implements)|(?:extends)|(?:override)|(?:this))\b/g;
-var keywordOtherReg = /\b((?:new)|(?:var)|(?:let)|(?:function)|(?:void)|(?:static)|(?:final)|(?:const))\b/g;
+var keywordOopReg = /\b((?:public)|(?:private)|(?:protected)|(?:package)|(?:interface)|(?:protocol)|(?:class)|(?:implements)|(?:extends)|(?:override)|(?:this))\b/g;
+var keywordOtherReg = /\b((?:new)|(?:var)|(?:let)|(?:function)|(?:func)|(?:enum)|(?:struct)|(?:void)|(?:static)|(?:final)|(?:const))\b/g;
 var annotationReg = /(\/\/(?:.+)*)/;
 
 function highlight(line) {
