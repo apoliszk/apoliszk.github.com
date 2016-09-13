@@ -1,9 +1,20 @@
 function convert(inputStr) {
     var lines = inputStr.split('\n');
-    for (var i = 0, len = lines.length; i < len; i++) {
-        lines[i] = convertLine(lines[i]);
+    var len = lines.length;
+    for (var i = 0; i < len; i++) {
+        lines[i] = getLineNumElement(i, len) + convertLine(lines[i]);
     }
     return '<code>\n' + lines.join('\n<br>') + '\n</code>';
+}
+
+function getLineNumElement(index, len) {
+    var numStr = index + 1 + '';
+    var numLength = (len + '').length;
+    var prefix = '';
+    for (var i = numStr.length; i < numLength; i++) {
+        prefix += '&nbsp;';
+    }
+    return '<codelinenum>' + prefix + numStr + '</codelinenum>'
 }
 
 function convertLine(line) {
