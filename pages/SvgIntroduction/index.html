@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>SVG简介</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="files/style.css" rel="stylesheet">
+	<script src="files/script.js"></script>
+</head>
+
+<body>
+	<h1>SVG简介</h1>
+	<section>
+		<h2>图形系统</h2>
+		<table>
+			<thead>
+				<tr>
+					<th></th>
+					<th>栅格图形</th>
+					<th>矢量图形</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>表示方式</td>
+					<td>像素颜色或颜色索引的数组</td>
+					<td>绘图指令</td>
+				</tr>
+				<tr>
+					<td>特点</td>
+					<td>简单，和显示屏显示方式一样</td>
+					<td>缩放不失真，存储空间小</td>
+				</tr>
+				<tr>
+					<td>适用</td>
+					<td>照片</td>
+					<td>工程制图，动画</td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+	<section>
+		<h2>矢量图形的表示方式之一：SVG<i>(Scalable Vector Graphics)</i></h2>
+		<h3>1. SVG in HTML</h3>
+		<ul>
+			<li>SVG嵌入HTML的方法：
+				<a href="http://www.w3school.com.cn/svg/svg_inhtml.asp" target="_blank">曾经</a> &nbsp;
+				<a id="nowLink" href="javascript:void(0)" onclick="toggleNowLink()">现在
+					<code>
+						<codelinenum>&nbsp;1</codelinenum>&lt;!DOCTYPE html&gt;
+						<br><codelinenum>&nbsp;2</codelinenum>&lt;html lang=<codestring>"en"</codestring>&gt;
+						<br><codelinenum>&nbsp;3</codelinenum>&lt;head&gt;
+						<br><codelinenum>&nbsp;4</codelinenum>&nbsp;&nbsp;&nbsp;&nbsp;&lt;title&gt;SVG Example&lt;/title&gt;
+						<br><codelinenum>&nbsp;5</codelinenum>&nbsp;&nbsp;&nbsp;&nbsp;&lt;meta charset=<codestring>"UTF-8"</codestring>&gt;
+						<br><codelinenum>&nbsp;6</codelinenum>&lt;/head&gt;
+						<br><codelinenum>&nbsp;7</codelinenum>&lt;body&gt;
+						<br><codelinenum>&nbsp;8</codelinenum>&nbsp;&nbsp;&nbsp;&nbsp;&lt;svg width=<codestring>"200"</codestring> height=<codestring>"200"</codestring>&gt;
+						<br><codelinenum>&nbsp;9</codelinenum>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;circle cx=<codestring>"100"</codestring> cy=<codestring>"100"</codestring> r=<codestring>"50"</codestring> fill=<codestring>"green"</codestring> /&gt;
+						<br><codelinenum>10</codelinenum>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/svg&gt;
+						<br><codelinenum>11</codelinenum>&lt;/body&gt;
+						<br><codelinenum>12</codelinenum>&lt;/html&gt;
+					</code>
+				</a>
+			</li>
+			<li>比较<br>
+				<table>
+					<thead>
+						<tr>
+							<th></th>
+							<th>普通元素</th>
+							<th>svg元素</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>书写方式</td>
+							<td>无内容标签可以不闭合</td>
+							<td>严格XML格式，所有标签都要关闭</td>
+						</tr>
+						<tr>
+							<td>子元素</td>
+							<td>任意</td>
+							<td>svg规范包含的</td>
+						</tr>
+						<tr>
+							<td>css选择器</td>
+							<td>支持</td>
+							<td>支持</td>
+						</tr>
+						<tr>
+							<td>基本属性：id、name、class、onclick...</td>
+							<td>支持</td>
+							<td>支持</td>
+						</tr>
+					</tbody>
+				</table>
+			</li>
+			<li>CSS样式支持：
+				<br> 根标签：background相关、border相关、position、left、top、margin、padding、width、height
+				<br> 所有标签：font相关、display、visibility、transform
+			</li>
+			<li>特有样式(也可以用属性设置)：fill相关、stroke相关</li>
+			<li>常用标签：title、desc、circle、rect、line、text、path、polyline、g、use、defs
+				<p>
+					<svg width="140" height="170">
+						<title>Cat</title>
+						<desc>Stick Figure of a Cat</desc>
+						<circle cx="70" cy="95" r="50" style="stroke: black; fill: none;" />
+						<circle cx="55" cy="80" r="5" stroke="black" fill="#339933" />
+						<circle cx="85" cy="80" r="5" stroke="black" fill="#339933" />
+						<g id="whiskers">
+							<line x1="75" y1="95" x2="135" y2="85" style="stroke: black;" />
+							<line x1="75" y1="95" x2="135" y2="105" style="stroke: black;" />
+						</g>
+						<use href="#whiskers" transform="scale(-1 1) translate(-140 0)" />
+						<polyline points="108 62, 90 10, 70 45, 50, 10, 32, 62" style="stroke: black; fill: none;" />
+						<path d="M 75 90 L 65 90 A 5 10 0 0 0 75 90" style="stroke: black; fill: #ffcccc" />
+						<polyline points="35 110, 45 120, 95 120, 105, 110" style="stroke: black; fill: none;" />
+						<text x="60" y="165" style="font-family: sans-serif; font-size: 14px; stroke: none; fill: black;">Cat</text>
+					</svg>
+					<code>
+						<codelinenum>&nbsp;1</codelinenum>&lt;svg width=<codestring>"140"</codestring> height=<codestring>"170"</codestring> &gt;
+						<br><codelinenum>&nbsp;2</codelinenum>&nbsp;&nbsp;&nbsp;&nbsp;&lt;title&gt;Cat&lt;/title&gt;
+						<br><codelinenum>&nbsp;3</codelinenum>&nbsp;&nbsp;&nbsp;&nbsp;&lt;desc&gt;Stick Figure of a Cat&lt;/desc&gt;
+						<br><codelinenum>&nbsp;4</codelinenum>&nbsp;&nbsp;&nbsp;&nbsp;&lt;circle cx=<codestring>"70"</codestring> cy=<codestring>"95"</codestring> r=<codestring>"50"</codestring> style=<codestring>"stroke: black; fill: none;"</codestring> /&gt;
+						<br><codelinenum>&nbsp;5</codelinenum>&nbsp;&nbsp;&nbsp;&nbsp;&lt;circle cx=<codestring>"55"</codestring> cy=<codestring>"80"</codestring> r=<codestring>"5"</codestring> stroke=<codestring>"black"</codestring> fill=<codestring>"#339933"</codestring> /&gt;
+						<br><codelinenum>&nbsp;6</codelinenum>&nbsp;&nbsp;&nbsp;&nbsp;&lt;circle cx=<codestring>"85"</codestring> cy=<codestring>"80"</codestring> r=<codestring>"5"</codestring> stroke=<codestring>"black"</codestring> fill=<codestring>"#339933"</codestring> /&gt;
+						<br><codelinenum>&nbsp;7</codelinenum>&nbsp;&nbsp;&nbsp;&nbsp;&lt;g id=<codestring>"whiskers"</codestring>&gt;
+						<br><codelinenum>&nbsp;8</codelinenum>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;line x1=<codestring>"75"</codestring> y1=<codestring>"95"</codestring> x2=<codestring>"135"</codestring> y2=<codestring>"85"</codestring> style=<codestring>"stroke: black;"</codestring> /&gt;
+						<br><codelinenum>&nbsp;9</codelinenum>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;line x1=<codestring>"75"</codestring> y1=<codestring>"95"</codestring> x2=<codestring>"135"</codestring> y2=<codestring>"105"</codestring> style=<codestring>"stroke: black;"</codestring> /&gt;
+						<br><codelinenum>10</codelinenum>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/g&gt;
+						<br><codelinenum>11</codelinenum>&nbsp;&nbsp;&nbsp;&nbsp;&lt;use href=<codestring>"#whiskers"</codestring> transform=<codestring>"<codefnname>scale</codefnname>(-1 1) <codefnname>translate</codefnname>(-140 0)"</codestring> /&gt;
+						<br><codelinenum>12</codelinenum>&nbsp;&nbsp;&nbsp;&nbsp;&lt;polyline points=<codestring>"108 62, 90 10, 70 45, 50, 10, 32, 62"</codestring> style=<codestring>"stroke: black; fill: none;"</codestring> /&gt;
+						<br><codelinenum>13</codelinenum>&nbsp;&nbsp;&nbsp;&nbsp;&lt;path d=<codestring>"M 75 90 L 65 90 A 5 10 0 0 0 75 90"</codestring> style=<codestring>"stroke: black; fill: #ffcccc"</codestring> /&gt;
+						<br><codelinenum>14</codelinenum>&nbsp;&nbsp;&nbsp;&nbsp;&lt;polyline points=<codestring>"35 110, 45 120, 95 120, 105, 110"</codestring> style=<codestring>"stroke: black; fill: none;"</codestring> /&gt;
+						<br><codelinenum>15</codelinenum>&nbsp;&nbsp;&nbsp;&nbsp;&lt;text x=<codestring>"60"</codestring> y=<codestring>"165"</codestring> style=<codestring>"font-family: sans-serif; font-size: 14px; stroke: none; fill: black;"</codestring>&gt;Cat&lt;/text&gt;
+						<br><codelinenum>16</codelinenum>&lt;/svg&gt;
+					</code>
+				</p>
+			</li>
+		</ul>
+		<hr>
+		<h3>2. 坐标系统－viewBox</h3>
+		preserveAspectRatio="alignment [meet|slice]" or "none"
+		<p>
+			<svg width="100" height="200" viewBox="0 0 140 170" preserveAspectRatio="xMidYMid meet" style="border: 1px solid gray;">
+				<title>Cat</title>
+				<desc>Stick Figure of a Cat</desc>
+				<circle cx="70" cy="95" r="50" style="stroke: black; fill: none;" />
+				<circle cx="55" cy="80" r="5" stroke="black" fill="#339933" />
+				<circle cx="85" cy="80" r="5" stroke="black" fill="#339933" />
+				<g id="whiskers">
+					<line x1="75" y1="95" x2="135" y2="85" style="stroke: black;" />
+					<line x1="75" y1="95" x2="135" y2="105" style="stroke: black;" />
+				</g>
+				<use href="#whiskers" transform="scale(-1 1) translate(-140 0)" />
+				<polyline points="108 62, 90 10, 70 45, 50, 10, 32, 62" style="stroke: black; fill: none;" />
+				<path d="M 75 90 L 65 90 A 5 10 0 0 0 75 90" style="stroke: black; fill: #ffcccc" />
+				<polyline points="35 110, 45 120, 95 120, 105, 110" style="stroke: black; fill: none;" />
+				<text x="60" y="165" style="font-family: sans-serif; font-size: 14px; stroke: none; fill: black;">Cat</text>
+			</svg>
+		</p>
+		<hr>
+		<h3>3. 坐标转换－transform</h3>
+		translate scale rotate
+		<p>
+			<svg width="200" height="200" viewBox="0 0 50 50" style="border: 1px solid gray;">
+				<rect x="10" y="10" width="10" height="10" fill="green" />
+				<rect x="10" y="10" width="10" height="10" fill="none" stroke="black" transform="translate(15 15) rotate(45) translate(-15 -15)"
+				/>
+				<rect x="12" y="12" width="6" height="6" fill="none" stroke="white" transform="rotate(45 15 15)" />
+			</svg>
+		</p>
+	</section>
+</body>
+
+</html>

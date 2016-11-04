@@ -1,0 +1,41 @@
+body {
+    font-family: 微软雅黑;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+section {
+    margin-top: 2em;
+    border-top: 1px solid gray;
+}
+
+th {
+    background: #e0e0e0;
+}
+
+td, th {
+    border: 1px solid gray;
+    padding: 4px 9px;
+}
+
+li {
+    line-height: 1.5em;
+}
+
+a code {
+    display: none;
+    position: absolute;
+}
+
+a.toggle-on code {
+    display: block;
+}
+
+code { border-radius: 2px; padding: 16px 0px; margin: 8px 0px; line-height: 1.5; display: block; min-height: 200px; color: rgb(171, 178, 191); background: rgb(40, 44, 52); font-family: consolas, monospace; white-space: nowrap; overflow: auto; }
+codekeyword { color: rgb(198, 120, 221); }
+codefnname { color: rgb(75, 182, 194); }
+codestring, codestring * { color: rgb(124, 195, 121); }
+codeannotation, codeannotation * { color: rgb(92, 99, 112); }
+codelinenum { color: rgb(92, 99, 112); padding: 0px 19px 0px 9px; user-select: none; }
