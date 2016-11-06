@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 
 <head>
 	<title>SVG简介</title>
@@ -97,11 +97,39 @@
 				</table>
 			</li>
 			<li>CSS样式支持：
-				<br> 根标签：background相关、border相关、position、left、top、margin、padding、width、height
-				<br> 所有标签：font相关、display、visibility、transform
+				<p>
+					根标签：background相关、border相关、position、left、top、margin、padding、width、height
+					<br> 所有标签：font相关、display、visibility、transform
+				</p>
 			</li>
-			<li>特有样式(也可以用属性设置)：fill相关、stroke相关</li>
-			<li>常用标签：title、desc、circle、rect、line、text、path、polyline、g、use、defs
+			<li>特有样式：fill相关、stroke相关<i>(也可以用属性设置)</i></li>
+			<li>常用标签：
+				<table>
+					<tbody>
+						<tr>
+							<td>title、desc</td>
+							<td>不显示，用于描述SVG内容</td>
+						</tr>
+						<tr>
+							<td>circle、rect、line、text、path、polyline</td>
+							<td>绘图相关</td>
+						</tr>
+						<tr>
+							<td>g</td>
+							<td>分组，g的样式会应用给所有子元素</td>
+						</tr>
+						<tr>
+							<td>use</td>
+							<td>复制href中指定的元素，可进行坐标转换和样式调整</td>
+						</tr>
+						<tr>
+							<td>defs</td>
+							<td>定义元素，不显示，与use一起使用</td>
+						</tr>
+					</tbody>
+				</table>
+			</li>
+			<li>示例
 				<p>
 					<svg width="140" height="170">
 						<title>Cat</title>
@@ -119,7 +147,8 @@
 						<polyline points="35 110, 45 120, 95 120, 105, 110" style="stroke: black; fill: none;" />
 						<text x="60" y="165" style="font-family: sans-serif; font-size: 14px; stroke: none; fill: black;">Cat</text>
 					</svg>
-					<code>
+					<br>
+					<code style="display: inline-block;">
 						<codelinenum>&nbsp;1</codelinenum>&lt;svg width=<codestring>"140"</codestring> height=<codestring>"170"</codestring> &gt;
 						<br><codelinenum>&nbsp;2</codelinenum>&nbsp;&nbsp;&nbsp;&nbsp;&lt;title&gt;Cat&lt;/title&gt;
 						<br><codelinenum>&nbsp;3</codelinenum>&nbsp;&nbsp;&nbsp;&nbsp;&lt;desc&gt;Stick Figure of a Cat&lt;/desc&gt;
@@ -141,8 +170,9 @@
 			</li>
 		</ul>
 		<hr>
-		<h3>2. 坐标系统－viewBox</h3>
-		preserveAspectRatio="alignment [meet|slice]" or "none"
+		<h3>2. 坐标系统</h3>
+		viewBox="startX startY width height"
+		<br>preserveAspectRatio="alignment [meet|slice]" or "none"
 		<p>
 			<svg width="100" height="200" viewBox="0 0 140 170" preserveAspectRatio="xMidYMid meet" style="border: 1px solid gray;">
 				<title>Cat</title>
