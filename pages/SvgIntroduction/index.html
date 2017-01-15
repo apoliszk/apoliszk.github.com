@@ -44,8 +44,8 @@
 		<h2>矢量图形的表示方式之一：SVG<i>(Scalable Vector Graphics)</i></h2>
 		<h3>1. SVG in HTML</h3>
 		<ul>
-			<li>SVG嵌入HTML的方法：
-				<a href="http://www.w3school.com.cn/svg/svg_inhtml.asp" target="_blank">曾经</a> &nbsp;
+			<li>SVG嵌入HTML的方法
+				<a href="http://www.w3school.com.cn/svg/svg_inhtml.asp" target="_blank">曾经</a>
 				<a id="nowLink" href="javascript:void(0)" onclick="toggleNowLink()">现在
 					<code>
 						<codelinenum>&nbsp;1</codelinenum>&lt;!DOCTYPE html&gt;
@@ -96,14 +96,14 @@
 					</tbody>
 				</table>
 			</li>
-			<li>CSS样式支持：
+			<li>CSS样式支持
 				<p>
 					根标签：background相关、border相关、position、left、top、margin、padding、width、height
 					<br> 所有标签：font相关、display、visibility、transform
 				</p>
 			</li>
 			<li>特有样式：fill相关、stroke相关<i>(也可以用属性设置)</i></li>
-			<li>常用标签：
+			<li>常用标签
 				<table>
 					<tbody>
 						<tr>
@@ -120,7 +120,7 @@
 						</tr>
 						<tr>
 							<td>use</td>
-							<td>复制href中指定的元素，可进行坐标转换和样式调整</td>
+							<td>复制href中指定的元素，可进行坐标转换和样式调整。手机浏览器目前不支持</td>
 						</tr>
 						<tr>
 							<td>defs</td>
@@ -171,6 +171,7 @@
 		</ul>
 		<hr>
 		<h3>2. 坐标系统</h3>
+		<p>左上角为原点，向右x值变大，向下y值变大</p>
 		viewBox="startX startY width height"
 		<br>preserveAspectRatio="alignment [meet|slice]" or "none"
 		<p>
