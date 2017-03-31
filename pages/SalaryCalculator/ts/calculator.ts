@@ -48,15 +48,15 @@ export class Calculator {
         }
         let str = '明细<br>';
         str += '<br>个人缴纳<br>';
-        str += '&nbsp;&nbsp;缴税￥' + tax + '<br>';
+        str += '&nbsp;&nbsp;缴税￥' + parseFloat(tax.toFixed(2)) + '<br>';
         for (let i = 0; i < this.config.personal.ratio.length; i++) {
             let item = this.config.personal.ratio[i];
-            str += '&nbsp;&nbsp;' + item.type + '【' + (item.value * 100) + '%】' + '￥' + (total * item.value) + '<br>';
+            str += '&nbsp;&nbsp;' + item.type + '【' + (item.value * 100) + '%】' + '￥' + parseFloat((total * item.value).toFixed(2)) + '<br>';
         }
         str += '<br>公司缴纳<br>';
         for (let i = 0; i < this.config.company.ratio.length; i++) {
             let item = this.config.company.ratio[i];
-            str += '&nbsp;&nbsp;' + item.type + '【' + (item.value * 100) + '%】' + '￥' + (total * item.value) + '<br>';
+            str += '&nbsp;&nbsp;' + item.type + '【' + (item.value * 100) + '%】' + '￥' + parseFloat((total * item.value).toFixed(2)) + '<br>';
         }
         return str;
     }
