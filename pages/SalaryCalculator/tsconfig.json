@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "outDir": "out",
+        "target": "es5",
+        "sourceMap": true,
+        "experimentalDecorators": true
+    },
+    "include": [
+        "ts/**/*"
+    ]
+}

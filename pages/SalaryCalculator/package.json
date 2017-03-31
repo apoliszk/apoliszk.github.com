@@ -1,0 +1,17 @@
+{
+  "name": "salary-caculator",
+  "version": "1.0.0",
+  "description": "salary caculator",
+  "main": "bundle.js",
+  "dependencies": {},
+  "devDependencies": {
+    "browserify": "^14.1.0",
+    "tsify": "^3.0.1",
+    "typescript": "^2.2.1"
+  },
+  "scripts": {
+    "start": "browserify --debug ts/main.ts -p [tsify] -o bundle.js"
+  },
+  "author": "kzhang",
+  "license": "ISC"
+}

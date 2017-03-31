@@ -1,0 +1,125 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+}
+
+.content {
+    width: 400px;
+    height: 600px;
+    margin: auto;
+    background: #eef;
+    box-shadow: 2px 2px 6px black;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.header {
+    margin-bottom:10px;
+    text-align: center;
+}
+
+.screen {
+    flex: 1;
+    border: 2px inset;
+    background: #fff;
+    overflow-y: auto;
+}
+
+.screen .chat {
+    margin-top: 8px;
+    overflow: hidden;
+    clear: both;
+}
+
+.screen .chat p {
+    padding: 8px 20px;
+    border-radius: 8px;
+    position: relative;
+    color: white;
+}
+
+.screen .chat::before {
+    content: '';
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: block;
+}
+
+.screen .chat.server::before {
+    float: left;
+    margin-left: 8px;
+    background: url(images/server.png) center;
+}
+
+.screen .chat.client::before {
+    float: right;
+    margin-right: 8px;
+    background: url(images/client.png) center;
+}
+
+.screen .chat.server p {
+    background: #7FB446;
+    margin-left: 8px;
+    float: left;
+}
+
+.screen .chat.client p {
+    background: #5FA2DD;
+    margin-right: 8px;
+    float: right;
+}
+
+.screen .client p::after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    right: -4px;
+    top: 8px;
+    background: #5FA2DD;
+    transform: rotate(45deg);
+}
+
+.screen .server p::after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    left: -4px;
+    top: 8px;
+    background: #7FB446;
+    transform: rotate(45deg);
+}
+
+.bottom-bar {
+    display: flex;
+    padding: 10px 0;
+}
+
+.bottom-bar input {
+    font-size: 1.2em;
+    line-height: 2em;
+}
+
+.bottom-bar input[type=text] {
+    flex: 1;
+    min-width: 0;
+    padding: 4px 10px;
+}
+
+.bottom-bar input[type=button] {
+    margin: 0 0 0 10px;
+    padding: 0 20px;
+}
