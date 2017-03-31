@@ -22,6 +22,12 @@ body {
     padding: 10px;
 }
 
+@media screen and (max-width: 600px) {
+    .content {
+        margin: 5px auto;
+    }
+}
+
 .header {
     margin-bottom:10px;
     text-align: center;
