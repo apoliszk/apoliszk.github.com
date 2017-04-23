@@ -239,7 +239,7 @@ var ImgCanvasComponent = (function () {
     };
     ImgCanvasComponent.prototype.onMouseMove = function (event) {
         var rect = this.canvas.getBoundingClientRect();
-        this.imgPartService.setMousePosition(event.offsetX - rect.left, event.offsetY - rect.top);
+        this.imgPartService.setMousePosition(event.clientX - rect.left, event.clientY - rect.top);
     };
     ImgCanvasComponent.prototype.resetCanvasSize = function () {
         this.shadowCanvas.width = this.canvas.width = Math.floor(this.canvas.parentElement.clientWidth);
