@@ -1,21 +1,21 @@
 webpackJsonp([2,4],{
 
-/***/ 132:
+/***/ 130:
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(44)();
+exports = module.exports = __webpack_require__(20)();
 // imports
 
 
 // module
-exports.push([module.i, "/* You can add global styles to this file, and also import other style files */\n", ""]);
+exports.push([module.i, "/* You can add global styles to this file, and also import other style files */\nhtml, body {\n    padding: 0;\n    margin: 0;\n    height: 100%;\n    font-family: Cambria, Georgia, serif;\n}", ""]);
 
 // exports
 
 
 /***/ }),
 
-/***/ 158:
+/***/ 166:
 /***/ (function(module, exports) {
 
 /*
@@ -268,15 +268,15 @@ function updateLink(linkElement, obj) {
 
 /***/ }),
 
-/***/ 162:
+/***/ 170:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(72);
+module.exports = __webpack_require__(70);
 
 
 /***/ }),
 
-/***/ 44:
+/***/ 20:
 /***/ (function(module, exports) {
 
 /*
@@ -333,16 +333,16 @@ module.exports = function() {
 
 /***/ }),
 
-/***/ 72:
+/***/ 70:
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(132);
+var content = __webpack_require__(130);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(158)(content, {});
+var update = __webpack_require__(166)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -360,5 +360,5 @@ if(false) {
 
 /***/ })
 
-},[162]);
+},[170]);
 //# sourceMappingURL=styles.bundle.js.map
