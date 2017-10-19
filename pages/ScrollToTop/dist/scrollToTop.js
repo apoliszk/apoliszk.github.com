@@ -33,12 +33,12 @@
     function easeMoveToTop() {
         window.removeEventListener('scroll', scrollHandler);
         animationFn(function () {
-            var delta = Math.max(document.body.scrollTop * .4, 9);
-            if (document.body.scrollTop > delta) {
-                document.body.scrollTop = document.body.scrollTop - delta;
+            var delta = Math.max(window.scrollY * .4, 9);
+            if (window.scrollY > delta) {
+                window.scroll(window.scrollX, window.scrollY - delta);
                 easeMoveToTop();
             } else {
-                document.body.scrollTop = 0;
+                window.scroll(window.scrollX, 0);
                 window.addEventListener('scroll', scrollHandler);
             }
         });
