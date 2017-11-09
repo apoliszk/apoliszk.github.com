@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>图像精灵制作工具</title>
+    <script src="./Rx.min.js"></script>
+    <script src="./highlight.pack.min.js"></script>
+    <link rel="stylesheet" href="./vs.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            margin: 1em;
+            color: #666;
+        }
+
+        h1+p {
+            margin-top: 1em;
+        }
+
+        .button {
+            color: white;
+            padding: .8em 1.5em;
+            border-radius: .4em;
+            cursor: pointer;
+            box-shadow: 1px 1px 4px black;
+            transition: background 200ms, box-shadow 200ms;
+        }
+
+        .button:hover {
+            box-shadow: 2px 2px 8px black;
+        }
+
+        .button:active {
+            box-shadow: unset;
+        }
+
+        .button-bar {
+            overflow: hidden;
+            padding: 1em 0 0;
+        }
+
+        .button-bar>* {
+            margin: 0 2em 1em 0;
+        }
+
+        #fileSelectorLabel {
+            background: seagreen;
+            float: left;
+        }
+
+        #fileSelectorLabel:hover {
+            background: lightseagreen;
+        }
+
+        #fileSelector {
+            display: none;
+        }
+
+        #exportBtn,
+        #copyBtn {
+            visibility: hidden;
+            text-decoration: none;
+            background: coral;
+            float: left;
+        }
+
+        #exportBtn:hover,
+        #copyBtn:hover {
+            background: lightcoral;
+        }
+
+        #resultArea {
+            display: flex;
+            align-items: flex-start;
+            padding: 1em;
+            background: #e0e0e0;
+            border-radius: .5em;
+        }
+
+        #resultCss {
+            font-family: monospace;
+            vertical-align: top;
+            margin-left: 2em;
+            background: unset;
+        }
+
+        #hiddenArea {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            border: none;
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>图像精灵制作工具</h1>
+    <p>该工具使用图片文件名作为类名输出CSS</p>
+    <div class="button-bar">
+        <label id="fileSelectorLabel" class="button">
+            选择图片（可多选）
+            <input id="fileSelector" type="file" accept="image/gif,image/jpg,image/jpeg,image/png,image/bmp" onchange="generateSprite()"
+                multiple>
+        </label>
+        <a id="exportBtn" class="button" download="compressed.png">导出图像精灵</a>
+        <a id="copyBtn" class="button" onclick="copyResult()">复制CSS</a>
+    </div>
+    <div id="resultArea">
+        <canvas id="canvas"></canvas>
+        <pre><code class="css" id="resultCss"></code></pre>
+    </div>
+    <textarea id="hiddenArea"></textarea>
+    <script>
+        let fileSelector = document.getElementById('fileSelector'),
+            fileReader = new FileReader(),
+            canvas = document.getElementById('canvas'),
+            context = canvas.getContext('2d'),
+            exportBtn = document.getElementById('exportBtn'),
+            copyCssBtn = document.getElementById('copyBtn'),
+            resultCss = document.getElementById('resultCss'),
+            hiddenArea = document.getElementById('hiddenArea');
+
+        function generateSprite() {
+            let files = Array.prototype.slice.call(fileSelector.files);
+            files.sort((a, b) => {
+                return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1;
+            });
+            Rx.Observable.from(files)
+                .concatMap(file => Rx.Observable.create(observer => {
+                    let img = document.createElement('img');
+                    img.fileName = file.name.substring(0, file.name.lastIndexOf('.'));
+                    fileReader.onload = e => {
+                        img.src = e.target.result;
+                        img.onload = () => {
+                            observer.next(img);
+                            observer.complete();
+                        };
+                    };
+                    fileReader.readAsDataURL(file);
+                }))
+                .reduce((acc, img) => {
+                    img.pos = {
+                        x: 0,
+                        y: 0
+                    };
+                    if (acc.images.length > 0) {
+                        let lastImg = acc.images[acc.images.length - 1];
+                        img.pos.y = lastImg.pos.y + lastImg.height;
+                    }
+                    acc.maxWidth = Math.max(img.width, acc.maxWidth);
+                    acc.height += img.height;
+                    acc.images.push(img);
+
+                    return acc;
+                }, {
+                    maxWidth: 0,
+                    height: 0,
+                    images: []
+                })
+                .subscribe(obj => renderCanvas(obj));
+        }
+
+        function renderCanvas(obj) {
+            canvas.width = obj.maxWidth;
+            canvas.height = obj.height;
+
+            context.clearRect(0, 0, canvas.width, canvas.height);
+
+            let htmls = [];
+
+            obj.images.forEach(img => {
+                htmls.push(`${img.fileName} {
+    width: ${img.width}px;
+    height: ${img.height}px;
+    background-image: url(images/compressed.png);
+    background-position: ${-img.pos.x}px ${-img.pos.y}px;
+}
+
+`);
+                context.drawImage(img, img.pos.x, img.pos.y);
+            });
+            resultCss.innerHTML = htmls.join('');
+            hljs.highlightBlock(resultCss);
+
+            exportBtn.style.visibility = 'visible';
+            exportBtn.href = canvas.toDataURL('png');
+
+            copyCssBtn.style.visibility = 'visible';
+        }
+
+        function copyResult() {
+            hiddenArea.value = resultCss.innerText;
+            hiddenArea.focus();
+            hiddenArea.select();
+            document.execCommand('copy');
+        }
+    </script>
+</body>
+
+</html>
