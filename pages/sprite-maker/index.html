@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html>
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>图像精灵制作工具</title>
+    <title>Online Sprite Maker</title>
     <script src="./Rx.min.js"></script>
     <script src="./highlight.pack.min.js"></script>
     <link rel="stylesheet" href="./vs.css">
@@ -105,16 +105,16 @@
 </head>
 
 <body>
-    <h1>图像精灵制作工具</h1>
-    <p>该工具使用图片文件名作为类名输出CSS</p>
+    <h1>Online Sprite Maker</h1>
+    <p>The image file name will be the output css class name.</p>
     <div class="button-bar">
         <label id="fileSelectorLabel" class="button">
-            选择图片（可多选）
+            Choose Images (Multiple)
             <input id="fileSelector" type="file" accept="image/gif,image/jpg,image/jpeg,image/png,image/bmp" onchange="generateSprite()"
                 multiple>
         </label>
-        <a id="exportBtn" class="button" download="compressed.png">导出图像精灵</a>
-        <a id="copyBtn" class="button" onclick="copyResult()">复制CSS</a>
+        <a id="exportBtn" class="button" download="compressed.png">Export Sprite Image</a>
+        <a id="copyBtn" class="button" onclick="copyResult()">Copy CSS</a>
     </div>
     <div id="resultArea">
         <canvas id="canvas"></canvas>
