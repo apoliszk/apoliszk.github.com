@@ -14,19 +14,13 @@
 	<link rel="stylesheet" href="../zenburn.css">
 
 	<style>
-		#html-presentation-blockquote {
-			overflow: hidden;
+		blockquote.important {
 			width: unset;
 		}
 
-		#html-presentation-blockquote::before {
+		blockquote.important::before {
 			content: url(quote.png);
 			vertical-align: super;
-		}
-
-		#html-presentation-blockquote cite {
-			float: right;
-			margin: 1.5em .5em 0 0;
 		}
 
 		.demo-btn {
@@ -43,6 +37,15 @@
 		.demo-btn.large {
 			font-size: 24px;
 		}
+
+		pre.compact {
+			margin: 0;
+			line-height: 0;
+		}
+
+		pre.compact code {
+			line-height: 1.2;
+		}
 	</style>
 </head>
 
@@ -52,9 +55,8 @@
 			<!--html-->
 			<section>
 				<h2>HTML</h2>
-				<blockquote id="html-presentation-blockquote">
+				<blockquote class="important">
 					HTML编写要依据语义而不是样式。
-					<cite>kzhang</cite>
 				</blockquote>
 			</section>
 			<section>
@@ -109,14 +111,14 @@
 			<!--css-->
 			<section>
 				<h2>CSS</h2>
-				<blockquote>
+				<blockquote class="important">
 					DRY - Don't Repeat Yourself
 				</blockquote>
 			</section>
 			<section>
 				<button class="demo-btn">Yes!</button>
 				<button class="demo-btn large fragment" data-fragment-index="2">Yes!</button>
-				<pre class="fragment" data-trim data-fragment-index="1">
+				<pre class="compact fragment" data-trim data-fragment-index="1">
 					<code class="hljs">
 button {
   padding: 5px 16px;
@@ -129,7 +131,7 @@ button {
 }
 					</code>
 				</pre>
-				<pre class="fragment" data-trim data-fragment-index="3">
+				<pre class="compact fragment" data-trim data-fragment-index="3">
 					<code class="hljs">
 button.large {
   padding: 10px 26px;
@@ -238,7 +240,7 @@ input[type="text"] {
 					<li class="fragment">Android IOS：Cordova</li>
 					<li class="fragment">Windows Mac：Electron</li>
 				</ul>
-				<blockquote class="fragment">
+				<blockquote class="fragment important">
 					凡是能用JS实现的，最终都会用JS实现。
 				</blockquote>
 			</section>
