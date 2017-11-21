@@ -256,7 +256,7 @@ input[type="text"] {
 		// - https://github.com/hakimel/reveal.js#dependencies
 		Reveal.initialize({
 			dependencies: [
-				{ src: '../highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } }
+				{ src: '../highlight.js', async: false, callback: function () { hljs.initHighlightingOnLoad(); } }
 			]
 		});
 	</script>
