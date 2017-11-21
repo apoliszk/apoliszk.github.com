@@ -1,0 +1,261 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<title>Web Basic</title>
+
+	<link rel="stylesheet" href="../reveal.css">
+	<link rel="stylesheet" href="../black.css">
+
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="../zenburn.css">
+
+	<style>
+		#html-presentation-blockquote {
+			overflow: hidden;
+			width: unset;
+		}
+
+		#html-presentation-blockquote::before {
+			content: url(quote.png);
+			vertical-align: super;
+		}
+
+		#html-presentation-blockquote cite {
+			float: right;
+			margin: 1.5em .5em 0 0;
+		}
+
+		.demo-btn {
+			padding: .3em .8em;
+			border-radius: .2em;
+			font-size: 12px;
+			line-height: 1.5;
+
+			border: 1px solid rgba(0, 0, 0, .1);
+			background: #58a linear-gradient( hsla(0, 0%, 100%, .2), transparent);
+			color: white;
+		}
+
+		.demo-btn.large {
+			font-size: 24px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<!--html-->
+			<section>
+				<h2>HTML</h2>
+				<blockquote id="html-presentation-blockquote">
+					HTML编写要依据语义而不是样式。
+					<cite>kzhang</cite>
+				</blockquote>
+			</section>
+			<section>
+				<h2 cite="HTML5秘籍">依据语义有什么好处？</h2>
+				<ul>
+					<li class="fragment">容易修改和维护</li>
+					<li class="fragment">
+						<a href="https://v.qq.com/x/page/n0501uv25og.html" target="_blank">无障碍性</a>
+					</li>
+					<li class="fragment">搜索引擎优化</li>
+					<li class="fragment">未来的功能</li>
+				</ul>
+			</section>
+			<section>
+				<h2>反例</h2>
+				<section>
+					<pre>
+						<code class="hljs" data-trim>
+<ul>
+  <li>HTML编写要依据语义而不是样式。</li>
+</ul>
+						</code>
+					</pre>
+				</section>
+				<section>
+					<pre>
+						<code class="hljs" data-trim>
+<blockquote>
+  <img src="quote.png">
+  HTML编写要依据语义而不是样式。
+</blockquote>
+						</code>
+					</pre>
+				</section>
+			</section>
+			<section>
+				<pre>
+					<code class="hljs" data-trim>
+<style>
+  blockquote::before {
+    content: url(quote.png);
+  }
+</style>
+...
+<blockquote>
+  HTML编写要依据语义而不是样式。
+</blockquote>
+					</code>
+				</pre>
+			</section>
+
+			<!--css-->
+			<section>
+				<h2>CSS</h2>
+				<blockquote>
+					DRY - Don't Repeat Yourself
+				</blockquote>
+			</section>
+			<section>
+				<button class="demo-btn">Yes!</button>
+				<button class="demo-btn large fragment" data-fragment-index="2">Yes!</button>
+				<pre class="fragment" data-trim data-fragment-index="1">
+					<code class="hljs">
+button {
+  padding: 5px 16px;
+  border-radius: 4px;
+  font-size: 20px;
+  line-height: 30px;
+  border: 1px solid rgba(0, 0, 0, .1);
+  background: #58a linear-gradient(hsla(0, 0%, 100%, .2), transparent);
+  color: white;
+}
+					</code>
+				</pre>
+				<pre class="fragment" data-trim data-fragment-index="3">
+					<code class="hljs">
+button.large {
+  padding: 10px 26px;
+  border-radius: 6px;
+  font-size: 32px;
+  line-height: 48px;
+}
+					</code>
+				</pre>
+			</section>
+
+			<section>
+				<pre>
+					<code class="hljs">
+button {
+  padding: .3em .8em;
+  border-radius: .2em;
+  font-size: 12px;
+  line-height: 1.5;
+  border: 1px solid rgba(0, 0, 0, .1);
+  background: #58a linear-gradient(hsla(0, 0%, 100%, .2), transparent);
+  color: white;
+}
+
+button.large {
+  font-size: 24px;
+}
+					</code>
+				</pre>
+			</section>
+
+			<section>
+				<h2>企业级应用
+					<br>老板要改页面主色调
+					<br>怎么办？
+				</h2>
+				<p class="fragment">DataView, Tree, Grid, Link, Button, Text......</p>
+			</section>
+
+			<section>
+				<h2>Sass, Less</h2>
+			</section>
+
+			<section>
+				<h2>变量</h2>
+				<pre>
+					<code class="hljs">
+$highlight-color: #F90;
+
+button:hover {
+  background: $highlight-color;
+}
+
+input[type="text"] {
+  outline-color: $highlight-color;
+}
+					</code>
+				</pre>
+			</section>
+
+			<section>
+				<section>
+					<img src="laugh.png">
+				</section>
+				<section>
+					<h2>但是</h2>
+					<h2 class="fragment">新的问题出现了</h2>
+					<p class="fragment">
+						写的是Sass，浏览器运行的是Sass编译后的CSS，CSS出了问题，怎么知道要改哪个Sass？
+					</p>
+				</section>
+			</section>
+
+			<section>
+				<h2>SourceMap</h2>
+			</section>
+
+			<section>
+				<h2>Javascript</h2>
+			</section>
+
+			<section>
+				<h2>灵活性</h2>
+				<img src="hui.jpg">
+				<pre class="fragment">
+					<code class="hljs">
+(+(+!![]+([][[]]+[])[!+[]+!![]+!![]]+(+!![]+[])+(+[]+[])+(+[]+[])+(+[]+[]))+[])[+[]]+([]+{})[!+[]+!![]+!![]+!![]+!![]+!![]+!![]]+(![]+[])[!+[]+!![]]+([]+{})[+!![]]+[][(![]+[])[!+[]+!![]+!![]]+([]+{})[+!![]]+(!![]+[])[+!![]]+(!![]+[])[+[]]][([]+{})[!+[]+!![]+!![]+!![]+!![]]+([]+{})[+!![]]+([][[]]+[])[+!![]]+(![]+[])[!+[]+!![]+!![]]+(!![]+[])[+[]]+(!![]+[])[+!![]]+([][[]]+[])[+[]]+([]+{})[!+[]+!![]+!![]+!![]+!![]]+(!![]+[])[+[]]+([]+{})[+!![]]+(!![]+[])[+!![]]]((!![]+[])[+!![]]+([][[]]+[])[!+[]+!![]+!![]]+(!![]+[])[+[]]+([][[]]+[])[+[]]+(!![]+[])[+!![]]+([][[]]+[])[+!![]]+([]+{})[!+[]+!![]+!![]+!![]+!![]+!![]+!![]]+([][[]]+[])[+[]]+([][[]]+[])[+!![]]+([][[]]+[])[!+[]+!![]+!![]]+(![]+[])[!+[]+!![]+!![]]+([]+{})[!+[]+!![]+!![]+!![]+!![]]+(+{}+[])[+!![]]+([]+[][(![]+[])[!+[]+!![]+!![]]+([]+{})[+!![]]+(!![]+[])[+!![]]+(!![]+[])[+[]]][([]+{})[!+[]+!![]+!![]+!![]+!![]]+([]+{})[+!![]]+([][[]]+[])[+!![]]+(![]+[])[!+[]+!![]+!![]]+(!![]+[])[+[]]+(!![]+[])[+!![]]+([][[]]+[])[+[]]+([]+{})[!+[]+!![]+!![]+!![]+!![]]+(!![]+[])[+[]]+([]+{})[+!![]]+(!![]+[])[+!![]]]((!![]+[])[+!![]]+([][[]]+[])[!+[]+!![]+!![]]+(!![]+[])[+[]]+([][[]]+[])[+[]]+(!![]+[])[+!![]]+([][[]]+[])[+!![]]+([]+{})[!+[]+!![]+!![]+!![]+!![]+!![]+!![]]+(![]+[])[!+[]+!![]]+([]+{})[+!![]]+([]+{})[!+[]+!![]+!![]+!![]+!![]]+(+{}+[])[+!![]]+(!![]+[])[+[]]+([][[]]+[])[!+[]+!![]+!![]+!![]+!![]]+([]+{})[+!![]]+([][[]]+[])[+!![]])())[!+[]+!![]+!![]]+([][[]]+[])[!+[]+!![]+!![]])()([][(![]+[])[!+[]+!![]+!![]]+([]+{})[+!![]]+(!![]+[])[+!![]]+(!![]+[])[+[]]][([]+{})[!+[]+!![]+!![]+!![]+!![]]+([]+{})[+!![]]+([][[]]+[])[+!![]]+(![]+[])[!+[]+!![]+!![]]+(!![]+[])[+[]]+(!![]+[])[+!![]]+([][[]]+[])[+[]]+([]+{})[!+[]+!![]+!![]+!![]+!![]]+(!![]+[])[+[]]+([]+{})[+!![]]+(!![]+[])[+!![]]]((!![]+[])[+!![]]+([][[]]+[])[!+[]+!![]+!![]]+(!![]+[])[+[]]+([][[]]+[])[+[]]+(!![]+[])[+!![]]+([][[]]+[])[+!![]]+([]+{})[!+[]+!![]+!![]+!![]+!![]+!![]+!![]]+([][[]]+[])[!+[]+!![]+!![]]+(![]+[])[!+[]+!![]+!![]]+([]+{})[!+[]+!![]+!![]+!![]+!![]]+(+{}+[])[+!![]]+([]+[][(![]+[])[!+[]+!![]+!![]]+([]+{})[+!![]]+(!![]+[])[+!![]]+(!![]+[])[+[]]][([]+{})[!+[]+!![]+!![]+!![]+!![]]+([]+{})[+!![]]+([][[]]+[])[+!![]]+(![]+[])[!+[]+!![]+!![]]+(!![]+[])[+[]]+(!![]+[])[+!![]]+([][[]]+[])[+[]]+([]+{})[!+[]+!![]+!![]+!![]+!![]]+(!![]+[])[+[]]+([]+{})[+!![]]+(!![]+[])[+!![]]]((!![]+[])[+!![]]+([][[]]+[])[!+[]+!![]+!![]]+(!![]+[])[+[]]+([][[]]+[])[+[]]+(!![]+[])[+!![]]+([][[]]+[])[+!![]]+([]+{})[!+[]+!![]+!![]+!![]+!![]+!![]+!![]]+(![]+[])[!+[]+!![]]+([]+{})[+!![]]+([]+{})[!+[]+!![]+!![]+!![]+!![]]+(+{}+[])[+!![]]+(!![]+[])[+[]]+([][[]]+[])[!+[]+!![]+!![]+!![]+!![]]+([]+{})[+!![]]+([][[]]+[])[+!![]])())[!+[]+!![]+!![]]+([][[]]+[])[!+[]+!![]+!![]])()(([]+{})[+[]])[+[]]+(!+[]+!![]+!![]+!![]+!![]+!![]+!![]+[])+(!+[]+!![]+!![]+!![]+!![]+!![]+[]))+([][[]]+[])[!+[]+!![]+!![]]+([]+{})[!+[]+!![]+!![]+!![]+!![]+!![]+!![]]+(+(+!![]+([][[]]+[])[!+[]+!![]+!![]]+(+!![]+[])+(+[]+[])+(+[]+[])+(+[]+[]))+[])[!+[]+!![]+!![]+!![]+!![]+!![]+!![]]+([]+{})[+!![]]+([][[]]+[])[+[]]
+					</code>
+				</pre>
+			</section>
+
+			<section>
+				<h2>限制灵活性</h2>
+				<ul>
+					<li class="fragment">框架：ExtJS</li>
+					<li class="fragment">语言：TypeScript</li>
+				</ul>
+			</section>
+
+			<section>
+				<h2>通用性</h2>
+				<ul>
+					<li class="fragment">Server：NodeJs</li>
+					<li class="fragment">Android IOS：Cordova</li>
+					<li class="fragment">Windows Mac：Electron</li>
+				</ul>
+				<blockquote class="fragment">
+					凡是能用JS实现的，最终都会用JS实现。
+				</blockquote>
+			</section>
+		</div>
+	</div>
+
+	<script src="../head.min.js"></script>
+	<script src="../reveal.js"></script>
+
+	<script>
+		// More info about config & dependencies:
+		// - https://github.com/hakimel/reveal.js#configuration
+		// - https://github.com/hakimel/reveal.js#dependencies
+		Reveal.initialize({
+			dependencies: [
+				{ src: '../highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } }
+			]
+		});
+	</script>
+</body>
+
+</html>
