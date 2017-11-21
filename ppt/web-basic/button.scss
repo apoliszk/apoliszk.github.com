@@ -1,0 +1,9 @@
+$highlight-color: #F90;
+
+button {
+    font-size: 4em;
+    &:hover {
+        color: white;
+        background: $highlight-color;
+    }
+}
