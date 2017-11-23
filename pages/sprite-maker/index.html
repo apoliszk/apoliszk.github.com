@@ -110,8 +110,7 @@
     <div class="button-bar">
         <label id="fileSelectorLabel" class="button">
             Choose Images (Multiple)
-            <input id="fileSelector" type="file" accept="image/gif,image/jpg,image/jpeg,image/png,image/bmp" onchange="generateSprite()"
-                multiple>
+            <input id="fileSelector" type="file" accept=".gif,.jpg,.jpeg,.png,.bmp,.svg" onchange="generateSprite()" multiple>
         </label>
         <a id="exportBtn" class="button" download="compressed.png">Export Sprite Image</a>
         <a id="copyBtn" class="button" onclick="copyResult()">Copy CSS</a>
