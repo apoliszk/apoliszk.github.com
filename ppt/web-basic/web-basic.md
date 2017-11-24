@@ -133,7 +133,7 @@ button.large {
 
 茴香豆的茴有四种写法
 
-![hui](http://apoliszk.github.io/ppt/web-basic/hui.png)
+![hui](http://apoliszk.github.io/ppt/web-basic/hui.jpg)
 
 而对于JavaScript，每个会的人都能创造一种写法。例如下面这段天书一样的代码：
 
