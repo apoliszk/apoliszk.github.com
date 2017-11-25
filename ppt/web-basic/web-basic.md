@@ -1,4 +1,5 @@
 # 2017我的前端心得体会
+
 记录当下对前端基础HTML、CSS和JavaScript的认识。希望几年后，再看这篇文章，能笑着想“当时可真菜”。
 
 ## HTML心法
@@ -127,7 +128,7 @@ button.large {
 
 - 2010年，NodeJs问世，JavaScript支持开发Server端。
 - 2011年，PhoneGap问世，JavaScript支持开发移动端App。
-- 2012年，Electron问世，JavaScript支持开发PC端App。
+- 2015年，Electron问世，JavaScript支持开发PC端App。
 
 ### 2.极强的灵活性
 
