@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>JS RegExp Tester</title>
+    <script src="vue.min.js"></script>
+    <style>
+        html,
+        body {
+            font-family: consolas, monospace;
+            height: 100%;
+            margin: 0;
+        }
+
+        #wrapper {
+            display: flex;
+            box-sizing: border-box;
+            flex-direction: column;
+            padding: 1em;
+            height: 100%;
+        }
+
+        panel {
+            border-radius: 4px;
+            border: 4px solid skyblue;
+            display: flex;
+            flex-direction: column;
+        }
+
+        panel header {
+            background: skyblue;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2em;
+            padding: .3em .5em .5em;
+        }
+
+        panel .content {
+            flex: 1;
+            padding: .5em;
+            overflow: auto;
+        }
+
+        .input {
+            color: salmon;
+            box-sizing: border-box;
+            border-radius: 4px;
+            border: 4px solid;
+            padding: .5em;
+            position: relative;
+            display: flex;
+        }
+
+        .input>textarea {
+            flex-grow: 1;
+            border: none;
+            outline: none;
+        }
+
+        .input::before {
+            font-size: 2em;
+            content: attr(placehoder);
+            position: absolute;
+            pointer-events: none;
+            transition: all 200ms;
+            top: .4em;
+            left: .5em;
+        }
+
+        .input.active::before,
+        .input.not-empty::before {
+            font-size: 1em;
+            top: -1.7em;
+            left: 0;
+        }
+
+        #output {
+            flex-grow: 1;
+            flex-basis: 0px;
+        }
+
+        #output pre {
+            margin: 0;
+            padding: 0;
+            line-height: 2;
+        }
+
+        #output pre>span {
+            background: lightgoldenrodyellow;
+            border: 1px solid #999;
+            padding: 1px;
+        }
+
+        #regInput {
+            margin: 2em 0;
+        }
+
+        textarea,
+        pre {
+            font-family: consolas, monospace;
+            font-size: 2em;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrapper">
+        <panel id="output">
+            <header>Result</header>
+            <div class="content">
+                <pre v-html="result"></pre>
+            </div>
+        </panel>
+        <modern-input id="regInput" placeholder="Input regular expression here..." v-bind:text.sync="regexp"></modern-input>
+        <modern-input placeholder="Input text here..." v-bind:text.sync="text"></modern-input>
+    </div>
+
+    <script>
+        Vue.component('modern-input', {
+            template: `
+                <div v-bind:placehoder="placeholder" v-bind:class="{input: true, 'not-empty': isEmpty, active: isActive}">
+                    <textarea rows="4" v-model="text" v-on:input="changeHandler()" v-on:focus="focusHandler()" v-on:blur="blurHandler()"></textarea>
+                </div>
+            `,
+            props: ['placeholder', 'text'],
+            data: function () {
+                return {
+                    isActive: false,
+                }
+            },
+            computed: {
+                isEmpty: function () {
+                    return this.text ? true : false;
+                },
+            },
+            methods: {
+                focusHandler: function () {
+                    this.isActive = true;
+                },
+                blurHandler: function () {
+                    this.isActive = false;
+                },
+                changeHandler: function () {
+                    this.$emit('update:text', this.text);
+                }
+            }
+        });
+
+        var vm = new Vue({
+            el: '#wrapper',
+            data: {
+                regexp: '/at/g',
+                text: `Cat sat on a hat.
+Now the hat is under the cat.`
+            },
+            computed: {
+                result: function () {
+                    try {
+                        var reg = eval(this.regexp);
+                        return this.text.replace(reg, str => `<span>${str}</span>`);
+                    } catch (error) {
+                        return `Error: ${error.message}`;
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
