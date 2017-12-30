@@ -34,6 +34,9 @@ function makeHtml(subDirs, curDir) {
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <style>
+body {
+    font-family: consolas, monospace;
+}
 h4 {
     margin: 1em;
 }
