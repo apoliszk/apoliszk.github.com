@@ -114,8 +114,8 @@ svCon(no)->e`,
                         diagram.drawSVG('graphPanel', {
                             'font-family': 'consolas, sans-serif'
                         });
-                        this.canExport = true;
                         this.exportData = 'data:image/svg+xml;base64,' + Base64.encode(document.querySelector('#graphPanel svg').outerHTML);
+                        this.canExport = true;
                     } catch (error) {
                         this.canExport = false;
                     }
