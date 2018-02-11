@@ -78,7 +78,7 @@
 <body>
     <div id="wrapper">
         <div id="graphPanel" class="panel">
-            <a id="exportBtn" download="flow.svg" v-if="canExport" v-bind:href="exportData">Export</a>
+            <a id="exportBtn" download="flow.png" v-if="canExport" v-bind:href="exportData">Export</a>
             <label id="syncToggle">
                 <input type="checkbox" v-model="sync" v-on:change="flowChangeHandler()">Auto Refresh
             </label>
@@ -127,14 +127,36 @@ svCon(no)->e`,
                         diagram.drawSVG('graphPanel', {
                             'font-family': 'consolas, sans-serif'
                         });
-                        this.exportData = 'data:image/svg+xml;base64,' + Base64.encode(document.querySelector('#graphPanel svg').outerHTML);
-                        this.canExport = true;
+                        toPngDataUrl(graph.querySelector('svg'), dataUrl => {
+                            this.exportData = dataUrl;
+                            this.canExport = true;
+                        });
                     } catch (error) {
                         this.canExport = false;
                     }
                 }, 500)
             }
         });
+
+        let canvas = document.createElement('canvas');
+        let ctx = canvas.getContext('2d');
+        let img = document.createElement('img');
+
+        let toSvgDataUrl = svg => 'data:image/svg+xml;base64,' + Base64.encode(svg.outerHTML);
+        let toPngDataUrl = (svg, callback) => {
+            canvas.width = svg.clientWidth;
+            canvas.height = svg.clientHeight;
+
+            img.width = svg.clientWidth;
+            img.height = svg.clientHeight;
+            img.src = toSvgDataUrl(svg);
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            img.onload = (e => {
+                ctx.drawImage(img, 0, 0);
+                callback(canvas.toDataURL('png'));
+            });
+        }
     </script>
 </body>
 
