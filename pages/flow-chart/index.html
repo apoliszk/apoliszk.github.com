@@ -115,7 +115,7 @@ svCon(no)->e`,
                             'font-family': 'consolas, sans-serif'
                         });
                         this.canExport = true;
-                        this.exportData = 'data:image/svg+xml;base64,' + Base64.encode(document.querySelector('#graphPanel').innerHTML);
+                        this.exportData = 'data:image/svg+xml;base64,' + Base64.encode(document.querySelector('#graphPanel svg').outerHTML);
                     } catch (error) {
                         this.canExport = false;
                     }
