@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Flow Chart</title>
+    <script src="raphael.min.js"></script>
+    <script src="flowchart.min.js"></script>
+    <script src="vue.min.js"></script>
+    <script src="base64.min.js"></script>
+    <script src="lodash.min.js"></script>
+    <style>
+        html,
+        body,
+        #wrapper {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: consolas, sans-serif;
+            font-size: 16px;
+        }
+
+        #wrapper {
+            display: flex;
+        }
+
+        .panel {
+            border: 2px solid #333;
+            margin: 1em;
+        }
+
+        #graphPanel {
+            flex: 4;
+            overflow: auto;
+            position: relative;
+        }
+
+        #inputPanel {
+            margin-left: 0;
+            flex: 3;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #inputPanel textarea {
+            flex: 1;
+            width: 100%;
+            outline: none;
+            border: none;
+            box-sizing: border-box;
+            resize: none;
+            font-family: inherit;
+            font-size: inherit;
+            background: #333;
+            line-height: 1.5;
+            color: white;
+            padding: .5em;
+        }
+
+        #exportBtn {
+            position: absolute;
+            top: .5em;
+            right: 1em;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrapper">
+        <div id="graphPanel" class="panel">
+            <a id="exportBtn" download="flow.svg" v-if="canExport" v-bind:href="exportData">Export</a>
+        </div>
+        <div id="inputPanel" class="panel">
+            <textarea v-model="flow" v-on:input="flowChangeHandler()"></textarea>
+            <ul>
+                <li v-for=" ref in references ">
+                    {{ref}}
+                </li>
+            </ul>
+        </div>
+    </div>
+    <script>
+        let vm = new Vue({
+            el: '#wrapper',
+            data: {
+                canExport: true,
+                exportData: null,
+                flow: `s=>start: url, pwd
+mvCon=>condition: agentVer > 2
+urlOper=>operation: url = url + '/auth'
+svCon=>condition: sysVer > 4
+pwdOper=>operation: pwd = encode(pwd)
+e=>end: login(url, pwd)
+
+s->mvCon
+mvCon(yes)->urlOper->svCon
+svCon(yes)->pwdOper->e
+mvCon(no)->svCon
+svCon(no)->e`,
+                references: ['start', 'end', 'operation', 'subroutine', 'inputoutput', '=>', '->', ':>']
+            },
+            mounted: function () {
+                this.flowChangeHandler();
+            },
+            methods: {
+                flowChangeHandler: _.debounce(function () {
+                    let graph = document.querySelector('#graphPanel');
+                    let svg = graph.querySelector('svg');
+                    if (svg) graph.removeChild(svg);
+                    try {
+                        let diagram = flowchart.parse(this.flow);
+                        diagram.drawSVG('graphPanel', {
+                            'font-family': 'consolas, sans-serif'
+                        });
+                        this.canExport = true;
+                        this.exportData = 'data:image/svg+xml;base64,' + Base64.encode(document.querySelector('#graphPanel').innerHTML);
+                    } catch (error) {
+                        this.canExport = false;
+                    }
+                }, 500)
+            }
+        });
+    </script>
+</body>
+
+</html>
