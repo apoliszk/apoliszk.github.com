@@ -59,9 +59,17 @@
             padding: .5em;
         }
 
-        #exportBtn {
+        #exportBtn,
+        #syncToggle {
             position: absolute;
             top: .5em;
+        }
+
+        #exportBtn {
+            right: 10em;
+        }
+
+        #syncToggle {
             right: 1em;
         }
     </style>
@@ -71,6 +79,9 @@
     <div id="wrapper">
         <div id="graphPanel" class="panel">
             <a id="exportBtn" download="flow.svg" v-if="canExport" v-bind:href="exportData">Export</a>
+            <label id="syncToggle">
+                <input type="checkbox" v-model="sync" v-on:change="flowChangeHandler()">Auto Refresh
+            </label>
         </div>
         <div id="inputPanel" class="panel">
             <textarea v-model="flow" v-on:input="flowChangeHandler()"></textarea>
@@ -85,8 +96,9 @@
         let vm = new Vue({
             el: '#wrapper',
             data: {
-                canExport: true,
+                canExport: false,
                 exportData: null,
+                sync: true,
                 flow: `s=>start: url, pwd
 mvCon=>condition: agentVer > 2
 urlOper=>operation: url = url + '/auth'
@@ -106,6 +118,7 @@ svCon(no)->e`,
             },
             methods: {
                 flowChangeHandler: _.debounce(function () {
+                    if (!this.sync) return;
                     let graph = document.querySelector('#graphPanel');
                     let svg = graph.querySelector('svg');
                     if (svg) graph.removeChild(svg);
