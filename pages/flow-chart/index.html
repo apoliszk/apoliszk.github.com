@@ -99,19 +99,19 @@
                 canExport: false,
                 exportData: null,
                 sync: true,
-                flow: `s=>start: url, pwd
-avCon=>condition: agentVer > 2
-urlOper=>operation: url = url + '/auth'
-svCon=>condition: sysVer > 4
-pwdOper=>operation: pwd = encode(pwd)
-e=>end: login(url, pwd)
+                flow: `s=>start: url, pwd|past
+avCon=>condition: agentVer > 2|approved
+urlOper=>operation: url = url + '/auth'|past
+svCon=>condition: sysVer > 4|rejected
+pwdOper=>operation: pwd = encode(pwd)|invalid
+e=>end: login(url, pwd)|current
 
 s->avCon
-avCon(yes)->urlOper->svCon
+avCon(yes, right)->urlOper->svCon
 svCon(yes)->pwdOper->e
 avCon(no)->svCon
 svCon(no)->e`,
-                references: ['start', 'end', 'operation', 'subroutine', 'inputoutput', '=>', '->', ':>']
+                references: ['start', 'end', 'operation', 'subroutine', 'inputoutput', '=>', '->', ':>', 'future, current, past, request, invalid, approved, rejected']
             },
             mounted: function () {
                 this.flowChangeHandler();
@@ -125,7 +125,16 @@ svCon(no)->e`,
                     try {
                         let diagram = flowchart.parse(this.flow);
                         diagram.drawSVG('graphPanel', {
-                            'font-family': 'consolas, sans-serif'
+                            'font-family': 'consolas, sans-serif',
+                            'flowstate': {
+                                'past': { 'fill': '#CCCCCC' },
+                                'current': { 'fill': 'yellow', 'font-color': 'red', 'font-weight': 'bold' },
+                                'future': { 'fill': '#FFFF99' },
+                                'request': { 'fill': 'blue', 'font-color': 'white' },
+                                'invalid': { 'fill': '#FFFFFF' },
+                                'approved': { 'fill': '#58C4A3' },
+                                'rejected': { 'fill': '#C45879' }
+                            }
                         });
                         toPngDataUrl(graph.querySelector('svg'), dataUrl => {
                             this.exportData = dataUrl;
