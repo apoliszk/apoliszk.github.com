@@ -100,16 +100,16 @@
                 exportData: null,
                 sync: true,
                 flow: `s=>start: url, pwd
-mvCon=>condition: agentVer > 2
+avCon=>condition: agentVer > 2
 urlOper=>operation: url = url + '/auth'
 svCon=>condition: sysVer > 4
 pwdOper=>operation: pwd = encode(pwd)
 e=>end: login(url, pwd)
 
-s->mvCon
-mvCon(yes)->urlOper->svCon
+s->avCon
+avCon(yes)->urlOper->svCon
 svCon(yes)->pwdOper->e
-mvCon(no)->svCon
+avCon(no)->svCon
 svCon(no)->e`,
                 references: ['start', 'end', 'operation', 'subroutine', 'inputoutput', '=>', '->', ':>']
             },
