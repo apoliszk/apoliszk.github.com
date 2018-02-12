@@ -107,8 +107,8 @@ pwdOper=>operation: pwd = encode(pwd)|invalid
 e=>end: login(url, pwd)|current
 
 s->avCon
-avCon(yes, right)->urlOper->svCon
-svCon(yes)->pwdOper->e
+avCon(yes)->urlOper->svCon
+svCon(yes, right)->pwdOper->e
 avCon(no)->svCon
 svCon(no)->e`,
                 references: ['start', 'end', 'operation', 'condition', 'subroutine', 'inputoutput', '=>', '->', ':>', 'future, current, past, request, invalid, approved, rejected']
