@@ -78,7 +78,7 @@
 <body>
     <div id="wrapper">
         <div id="graphPanel" class="panel">
-            <a id="exportBtn" download="flow.png" v-if="exportData!=null" v-bind:href="exportData">Export</a>
+            <a id="exportBtn" download="flow.png" v-show="exportData!=null" v-bind:href="exportData">Export</a>
             <label id="syncToggle">
                 <input type="checkbox" v-model="sync">Auto Refresh
             </label>
