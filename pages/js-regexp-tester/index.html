@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>JS RegExp Tester</title>
     <script src="vue.min.js"></script>
+    <script src="lodash.min.js"></script>
     <style>
         html,
         body {
@@ -115,57 +116,57 @@
                 <pre v-html="result"></pre>
             </div>
         </panel>
-        <modern-input id="regInput" placeholder="Input regular expression here..." v-bind:text.sync="regexp"></modern-input>
-        <modern-input placeholder="Input text here..." v-bind:text.sync="text"></modern-input>
+        <modern-input id="regInput" placeholder="Input regular expression here..." v-bind:initial-value="regexp" v-on:update="updateRegExp"></modern-input>
+        <modern-input placeholder="Input text here..." v-bind:initial-value="text" v-on:update="updateText"></modern-input>
     </div>
 
     <script>
         Vue.component('modern-input', {
             template: `
-                <div v-bind:placehoder="placeholder" v-bind:class="{input: true, 'not-empty': isEmpty, active: isActive}">
-                    <textarea rows="4" v-model="text" v-on:input="changeHandler()" v-on:focus="focusHandler()" v-on:blur="blurHandler()"></textarea>
+                <div v-bind:placehoder="placeholder" v-bind:class="{input: true, 'not-empty': !!this.value, active: isActive}">
+                    <textarea rows="4" v-model="value" v-on:focus="isActive = true" v-on:blur="isActive = false"></textarea>
                 </div>
             `,
-            props: ['placeholder', 'text'],
+            props: ['placeholder', 'initialValue'],
             data: function () {
+                this.$emit('update', this.initialValue);
                 return {
                     isActive: false,
-                }
+                    value: this.initialValue
+                };
             },
-            computed: {
-                isEmpty: function () {
-                    return this.text ? true : false;
-                },
-            },
-            methods: {
-                focusHandler: function () {
-                    this.isActive = true;
-                },
-                blurHandler: function () {
-                    this.isActive = false;
-                },
-                changeHandler: function () {
-                    this.$emit('update:text', this.text);
+            watch: {
+                value: function () {
+                    this.$emit('update', this.value);
                 }
             }
         });
 
-        var vm = new Vue({
+        let vm = new Vue({
             el: '#wrapper',
             data: {
                 regexp: '/at/g',
                 text: `Cat sat on a hat.
-Now the hat is under the cat.`
+Now the hat is under the cat.`,
+                result: ''
             },
-            computed: {
-                result: function () {
+            methods: {
+                updateRegExp: function (value) {
+                    this.regexp = value;
+                    this.updateResult();
+                },
+                updateText: function (value) {
+                    this.text = value;
+                    this.updateResult();
+                },
+                updateResult: _.debounce(function () {
                     try {
-                        var reg = eval(this.regexp);
-                        return this.text.replace(reg, str => `<span>${str}</span>`);
+                        let reg = eval(this.regexp);
+                        this.result = this.text.replace(reg, str => `<span>${str}</span>`);
                     } catch (error) {
-                        return `Error: ${error.message}`;
+                        this.result = `Error: ${error.message}`;
                     }
-                }
+                }, 500)
             }
         });
     </script>
