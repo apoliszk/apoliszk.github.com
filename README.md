@@ -1,3 +1,3 @@
-# My Static Web Pages
+# My Blog
 
-[Take a look](http://apoliszk.github.io/)
+[https://www.cnblogs.com/apolis/](https://www.cnblogs.com/apolis/)
